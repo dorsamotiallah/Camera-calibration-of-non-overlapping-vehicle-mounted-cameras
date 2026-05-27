@@ -1,0 +1,743 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Length 1820 >>
+stream
+0.985 0.988 0.992 rg
+0.00 0.00 792.00 612.00 re f
+0.070 0.150 0.270 rg
+0.00 482.00 792.00 130.00 re f
+1.000 1.000 1.000 rg
+BT /F2 28.0 Tf 42.00 550.00 Td (Calibration Approaches Summary) Tj ET
+0.820 0.890 0.960 rg
+BT /F1 13.0 Tf 42.00 520.00 Td (CamMap baseline vs. NMC3D depth-balanced calibration variants) Tj ET
+0.080 0.320 0.580 rg
+42.00 440.00 78.40 18.00 re f
+1.000 1.000 1.000 rg
+BT /F2 8.2 Tf 50.00 445.00 Td (GROUND TRUTH) Tj ET
+1.000 1.000 1.000 rg
+42.00 340.00 220.00 70.00 re f
+0.820 0.860 0.900 RG
+0.60 w 42.00 340.00 220.00 70.00 re S
+0.080 0.320 0.580 rg
+BT /F2 10.0 Tf 56.00 387.00 Td (Rotation) Tj ET
+0.070 0.150 0.270 rg
+BT /F1 11.0 Tf 56.00 362.00 Td (180 deg around Y) Tj ET
+1.000 1.000 1.000 rg
+280.00 340.00 220.00 70.00 re f
+0.820 0.860 0.900 RG
+0.60 w 280.00 340.00 220.00 70.00 re S
+0.080 0.320 0.580 rg
+BT /F2 10.0 Tf 294.00 387.00 Td (Translation) Tj ET
+0.070 0.150 0.270 rg
+BT /F1 11.0 Tf 294.00 362.00 Td ([0.0000, 0.2600, -0.7600]) Tj ET
+1.000 1.000 1.000 rg
+518.00 340.00 220.00 70.00 re f
+0.820 0.860 0.900 RG
+0.60 w 518.00 340.00 220.00 70.00 re S
+0.080 0.320 0.580 rg
+BT /F2 10.0 Tf 532.00 387.00 Td (Error Vector) Tj ET
+0.070 0.150 0.270 rg
+BT /F1 11.0 Tf 532.00 362.00 Td (estimate - ground_truth) Tj ET
+0.180 0.200 0.230 rg
+BT /F1 10.0 Tf 42.00 300.00 Td (The report focuses on the primary first-pose optimization result. Final-pose optimization was removed from the) Tj ET
+0.180 0.200 0.230 rg
+BT /F1 10.0 Tf 42.00 286.00 Td (comparison because it behaved as a drift-sensitive consistency check rather than the best calibration estimate.) Tj ET
+0.080 0.320 0.580 rg
+BT /F1 10.0 Tf 42.00 268.00 Td (Current / final NMC3D name: Frame-to-frame equal-width distance-balanced CamMap with 8x8 image-grid selection.) Tj ET
+0.550 0.580 0.620 rg
+BT /F1 7.5 Tf 670.00 24 Td (Page 1 / 4) Tj ET
+endstream
+endobj
+4 0 obj
+<< /Type /Page /Parent 11 0 R /MediaBox [0 0 792 612] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 3 0 R >>
+endobj
+5 0 obj
+<< /Length 12831 >>
+stream
+0.070 0.150 0.270 rg
+BT /F2 18.0 Tf 42.00 570.00 Td (Primary Results Across Datasets) Tj ET
+0.080 0.320 0.580 rg
+42.00 562.00 110.00 2.50 re f
+0.350 0.400 0.460 rg
+BT /F1 9.5 Tf 42.00 546.00 Td (Translation difference is estimate minus ground truth in meters. Smaller component magnitudes mean closer agreement with) Tj ET
+0.350 0.400 0.460 rg
+BT /F1 9.5 Tf 42.00 533.00 Td (Gazebo ground truth.) Tj ET
+0.120 0.280 0.450 rg
+42.00 486.00 678.00 28.00 re f
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 46.00 503.00 Td (Dataset) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 134.00 503.00 Td (Approach) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 324.00 503.00 Td (Translation) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 449.00 503.00 Td (Difference [dx, dy, dz]) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 599.00 503.00 Td (Rot. Err.) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 669.00 503.00 Td (Inliers) Tj ET
+1.000 1.000 1.000 rg
+42.00 462.00 678.00 24.00 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 462.00 678.00 24.00 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 462.00 m 42.00 486.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 474.00 Td (Ground truth) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 130.00 462.00 m 130.00 486.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 134.00 474.00 Td (Ground truth) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 320.00 462.00 m 320.00 486.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 324.00 474.00 Td ([0.0000, 0.2600, -0.7600]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 445.00 462.00 m 445.00 486.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 449.00 474.00 Td ([0.0000, 0.0000, 0.0000]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 595.00 462.00 m 595.00 486.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 599.00 474.00 Td (0.000 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 665.00 462.00 m 665.00 486.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 669.00 474.00 Td (-) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 720.00 462.00 m 720.00 486.00 l S
+0.965 0.975 0.985 rg
+42.00 438.00 678.00 24.00 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 438.00 678.00 24.00 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 438.00 m 42.00 462.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 450.00 Td (Good recording) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 130.00 438.00 m 130.00 462.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 134.00 450.00 Td (CamMap baseline) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 320.00 438.00 m 320.00 462.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 324.00 450.00 Td ([0.0354, 0.2543, -0.7506]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 445.00 438.00 m 445.00 462.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 449.00 450.00 Td ([+0.0354, -0.0057, +0.0094]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 595.00 438.00 m 595.00 462.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 599.00 450.00 Td (0.849 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 665.00 438.00 m 665.00 462.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 669.00 450.00 Td (3815) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 720.00 438.00 m 720.00 462.00 l S
+1.000 1.000 1.000 rg
+42.00 409.20 678.00 28.80 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 409.20 678.00 28.80 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 409.20 m 42.00 438.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 426.00 Td (Good recording) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 130.00 409.20 m 130.00 438.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 134.00 426.00 Td (Current NMC3D: frame-to-frame equal-width distance-) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 134.00 415.60 Td (balanced CamMap) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 320.00 409.20 m 320.00 438.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 324.00 426.00 Td ([0.0460, 0.2529, -0.7615]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 445.00 409.20 m 445.00 438.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 449.00 426.00 Td ([+0.0460, -0.0071, -0.0015]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 595.00 409.20 m 595.00 438.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 599.00 426.00 Td (0.925 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 665.00 409.20 m 665.00 438.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 669.00 426.00 Td (1664) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 720.00 409.20 m 720.00 438.00 l S
+0.965 0.975 0.985 rg
+42.00 385.20 678.00 24.00 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 385.20 678.00 24.00 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 385.20 m 42.00 409.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 397.20 Td (Multi-depth recording) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 130.00 385.20 m 130.00 409.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 134.00 397.20 Td (CamMap baseline) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 320.00 385.20 m 320.00 409.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 324.00 397.20 Td ([-0.0186, 0.2692, -0.7278]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 445.00 385.20 m 445.00 409.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 449.00 397.20 Td ([-0.0186, +0.0092, +0.0322]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 595.00 385.20 m 595.00 409.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 599.00 397.20 Td (0.436 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 665.00 385.20 m 665.00 409.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 669.00 397.20 Td (478) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 720.00 385.20 m 720.00 409.20 l S
+1.000 1.000 1.000 rg
+42.00 356.40 678.00 28.80 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 356.40 678.00 28.80 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 356.40 m 42.00 385.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 373.20 Td (Multi-depth recording) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 130.00 356.40 m 130.00 385.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 134.00 373.20 Td (Current NMC3D: frame-to-frame equal-width distance-) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 134.00 362.80 Td (balanced CamMap) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 320.00 356.40 m 320.00 385.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 324.00 373.20 Td ([-0.0179, 0.2685, -0.7620]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 445.00 356.40 m 445.00 385.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 449.00 373.20 Td ([-0.0179, +0.0085, -0.0020]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 595.00 356.40 m 595.00 385.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 599.00 373.20 Td (0.640 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 665.00 356.40 m 665.00 385.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 669.00 373.20 Td (176) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 720.00 356.40 m 720.00 385.20 l S
+0.070 0.150 0.270 rg
+BT /F2 18.0 Tf 42.00 338.40 Td (Good Recording: Tested Variants) Tj ET
+0.080 0.320 0.580 rg
+42.00 330.40 110.00 2.50 re f
+0.350 0.400 0.460 rg
+BT /F1 9.5 Tf 42.00 314.40 Td (Dataset: orbcalib-master/good_results_2. Current result: NMC3D/good_results_2/NMC3D_calibration.txt.) Tj ET
+0.120 0.280 0.450 rg
+42.00 267.40 725.00 28.00 re f
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 46.00 284.40 Td (Approach) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 196.00 284.40 Td (Method) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 401.00 284.40 Td (Translation) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 516.00 284.40 Td (Difference [dx, dy, dz]) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 661.00 284.40 Td (Rot. Err.) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 723.00 284.40 Td (Inliers) Tj ET
+1.000 1.000 1.000 rg
+42.00 243.40 725.00 24.00 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 243.40 725.00 24.00 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 243.40 m 42.00 267.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 46.00 255.40 Td (CamMap baseline) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 192.00 243.40 m 192.00 267.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 196.00 255.40 Td (Original CamMap matching and global Sim3 calibration) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 397.00 243.40 m 397.00 267.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 401.00 255.40 Td ([0.0354, 0.2543, -0.7506]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 512.00 243.40 m 512.00 267.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 516.00 255.40 Td ([+0.0354, -0.0057, +0.0094]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 657.00 243.40 m 657.00 267.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 661.00 255.40 Td (0.849 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 719.00 243.40 m 719.00 267.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 723.00 255.40 Td (3815) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 767.00 243.40 m 767.00 267.40 l S
+0.965 0.975 0.985 rg
+42.00 215.60 725.00 27.80 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 215.60 725.00 27.80 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 215.60 m 42.00 243.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 46.00 231.40 Td (Global depth tertiles + 8x8 selected) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 46.00 221.50 Td (optimization) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 192.00 215.60 m 192.00 243.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 196.00 231.40 Td (Global depth-balanced selected matches used for) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 196.00 221.50 Td (optimization) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 397.00 215.60 m 397.00 243.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 401.00 231.40 Td ([0.0354, 0.2543, -0.7506]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 512.00 215.60 m 512.00 243.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 516.00 231.40 Td ([+0.0354, -0.0057, +0.0094]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 657.00 215.60 m 657.00 243.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 661.00 231.40 Td (0.849 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 719.00 215.60 m 719.00 243.40 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 723.00 231.40 Td (3815) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 767.00 215.60 m 767.00 243.40 l S
+1.000 1.000 1.000 rg
+42.00 187.80 725.00 27.80 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 187.80 725.00 27.80 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 187.80 m 42.00 215.60 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 46.00 203.60 Td (Global thresholds scoring, all-depth) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 46.00 193.70 Td (optimization) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 192.00 187.80 m 192.00 215.60 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 196.00 203.60 Td (Depth-balanced subsets select keyframe pairs; all-depth) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 196.00 193.70 Td (matches optimize) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 397.00 187.80 m 397.00 215.60 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 401.00 203.60 Td ([0.0294, 0.2523, -0.7475]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 512.00 187.80 m 512.00 215.60 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 516.00 203.60 Td ([+0.0294, -0.0077, +0.0125]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 657.00 187.80 m 657.00 215.60 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 661.00 203.60 Td (0.834 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 719.00 187.80 m 719.00 215.60 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 723.00 203.60 Td (3305) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 767.00 187.80 m 767.00 215.60 l S
+0.965 0.975 0.985 rg
+42.00 160.00 725.00 27.80 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 160.00 725.00 27.80 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 160.00 m 42.00 187.80 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 46.00 175.80 Td (Frame-to-frame Euclidean tertiles + 8x8) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 46.00 165.90 Td (grid) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 192.00 160.00 m 192.00 187.80 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 196.00 175.80 Td (Each pair is locally balanced by Euclidean distance) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 196.00 165.90 Td (tertiles) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 397.00 160.00 m 397.00 187.80 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 401.00 175.80 Td ([0.0355, 0.2542, -0.7507]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 512.00 160.00 m 512.00 187.80 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 516.00 175.80 Td ([+0.0355, -0.0058, +0.0093]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 657.00 160.00 m 657.00 187.80 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 661.00 175.80 Td (0.850 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 719.00 160.00 m 719.00 187.80 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 723.00 175.80 Td (3815) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 767.00 160.00 m 767.00 187.80 l S
+1.000 1.000 1.000 rg
+42.00 132.20 725.00 27.80 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 132.20 725.00 27.80 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 132.20 m 42.00 160.00 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 46.00 148.00 Td (Current NMC3D: equal-width distance-) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 46.00 138.10 Td (balanced CamMap) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 192.00 132.20 m 192.00 160.00 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 196.00 148.00 Td (Equal-width Euclidean distance bins plus 8x8 image-grid) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 196.00 138.10 Td (selection) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 397.00 132.20 m 397.00 160.00 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 401.00 148.00 Td ([0.0460, 0.2529, -0.7615]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 512.00 132.20 m 512.00 160.00 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 516.00 148.00 Td ([+0.0460, -0.0071, -0.0015]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 657.00 132.20 m 657.00 160.00 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 661.00 148.00 Td (0.925 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 719.00 132.20 m 719.00 160.00 l S
+0.130 0.150 0.180 rg
+BT /F1 6.9 Tf 723.00 148.00 Td (1664) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 767.00 132.20 m 767.00 160.00 l S
+0.550 0.580 0.620 rg
+BT /F1 7.5 Tf 670.00 24 Td (Page 2 / 4) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 11 0 R /MediaBox [0 0 792 612] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 5014 >>
+stream
+0.070 0.150 0.270 rg
+BT /F2 18.0 Tf 42.00 570.00 Td (Multi-Depth Recording) Tj ET
+0.080 0.320 0.580 rg
+42.00 562.00 110.00 2.50 re f
+0.350 0.400 0.460 rg
+BT /F1 9.5 Tf 42.00 546.00 Td (This dataset has stronger depth variation in the scene, where the current NMC3D balancing is most useful.) Tj ET
+0.120 0.280 0.450 rg
+42.00 499.00 765.00 28.00 re f
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 46.00 516.00 Td (Approach) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 206.00 516.00 Td (Method) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 426.00 516.00 Td (Translation) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 546.00 516.00 Td (Difference [dx, dy, dz]) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 696.00 516.00 Td (Rot. Err.) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 761.00 516.00 Td (Inliers) Tj ET
+1.000 1.000 1.000 rg
+42.00 475.00 765.00 24.00 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 475.00 765.00 24.00 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 475.00 m 42.00 499.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 46.00 487.00 Td (CamMap baseline) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 202.00 475.00 m 202.00 499.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 206.00 487.00 Td (Original CamMap matching and global Sim3 calibration) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 422.00 475.00 m 422.00 499.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 426.00 487.00 Td ([-0.0186, 0.2692, -0.7278]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 542.00 475.00 m 542.00 499.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 546.00 487.00 Td ([-0.0186, +0.0092, +0.0322]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 692.00 475.00 m 692.00 499.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 696.00 487.00 Td (0.436 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 757.00 475.00 m 757.00 499.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 761.00 487.00 Td (478) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 807.00 475.00 m 807.00 499.00 l S
+0.965 0.975 0.985 rg
+42.00 446.60 765.00 28.40 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 446.60 765.00 28.40 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 446.60 m 42.00 475.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 46.00 463.00 Td (Current NMC3D: equal-width distance-) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 46.00 452.80 Td (balanced CamMap) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 202.00 446.60 m 202.00 475.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 206.00 463.00 Td (Equal-width Euclidean distance bins plus 8x8 image-grid) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 206.00 452.80 Td (selection) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 422.00 446.60 m 422.00 475.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 426.00 463.00 Td ([-0.0179, 0.2685, -0.7620]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 542.00 446.60 m 542.00 475.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 546.00 463.00 Td ([-0.0179, +0.0085, -0.0020]) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 692.00 446.60 m 692.00 475.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 696.00 463.00 Td (0.640 deg) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 757.00 446.60 m 757.00 475.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.2 Tf 761.00 463.00 Td (176) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 807.00 446.60 m 807.00 475.00 l S
+0.070 0.150 0.270 rg
+BT /F2 18.0 Tf 42.00 428.60 Td (What The Current NMC3D Code Does) Tj ET
+0.080 0.320 0.580 rg
+42.00 420.60 110.00 2.50 re f
+0.080 0.320 0.580 rg
+42.00 388.60 18.00 18.00 re f
+1.000 1.000 1.000 rg
+BT /F2 8.0 Tf 48.00 394.60 Td (1) Tj ET
+0.150 0.170 0.200 rg
+BT /F1 9.2 Tf 70.00 394.60 Td (Run normal CamMap detection: BoW, Sim3 initialization, projection matching, and geometric validation.) Tj ET
+0.080 0.320 0.580 rg
+42.00 360.60 18.00 18.00 re f
+1.000 1.000 1.000 rg
+BT /F2 8.0 Tf 48.00 366.60 Td (2) Tj ET
+0.150 0.170 0.200 rg
+BT /F1 9.2 Tf 70.00 366.60 Td (For each accepted keyframe pair, keep only matches already found by CamMap.) Tj ET
+0.080 0.320 0.580 rg
+42.00 332.60 18.00 18.00 re f
+1.000 1.000 1.000 rg
+BT /F2 8.0 Tf 48.00 338.60 Td (3) Tj ET
+0.150 0.170 0.200 rg
+BT /F1 9.2 Tf 70.00 338.60 Td (For each matched map-point pair, compute average Euclidean camera distance: 0.5 * \(||Pc1|| + ||Pc2||\).) Tj ET
+0.080 0.320 0.580 rg
+42.00 304.60 18.00 18.00 re f
+1.000 1.000 1.000 rg
+BT /F2 8.0 Tf 48.00 310.60 Td (4) Tj ET
+0.150 0.170 0.200 rg
+BT /F1 9.2 Tf 70.00 310.60 Td (Split local distances into equal-width near, middle, and far bins.) Tj ET
+0.080 0.320 0.580 rg
+42.00 276.60 18.00 18.00 re f
+1.000 1.000 1.000 rg
+BT /F2 8.0 Tf 48.00 282.60 Td (5) Tj ET
+0.150 0.170 0.200 rg
+BT /F1 9.2 Tf 70.00 282.60 Td (Select equal counts from the three bins, limited by the smallest bin.) Tj ET
+0.080 0.320 0.580 rg
+42.00 248.60 18.00 18.00 re f
+1.000 1.000 1.000 rg
+BT /F2 8.0 Tf 48.00 254.60 Td (6) Tj ET
+0.150 0.170 0.200 rg
+BT /F1 9.2 Tf 70.00 254.60 Td (Within each bin, use an 8x8 image grid so selected matches are spatially distributed.) Tj ET
+0.080 0.320 0.580 rg
+42.00 220.60 18.00 18.00 re f
+1.000 1.000 1.000 rg
+BT /F2 8.0 Tf 48.00 226.60 Td (7) Tj ET
+0.150 0.170 0.200 rg
+BT /F1 9.2 Tf 70.00 226.60 Td (Optimize calibration using the selected frame-to-frame balanced matches.) Tj ET
+0.550 0.580 0.620 rg
+BT /F1 7.5 Tf 670.00 24 Td (Page 3 / 4) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 11 0 R /MediaBox [0 0 792 612] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 6043 >>
+stream
+0.070 0.150 0.270 rg
+BT /F2 18.0 Tf 42.00 570.00 Td (Depth-Balancing Variants Tested) Tj ET
+0.080 0.320 0.580 rg
+42.00 562.00 110.00 2.50 re f
+0.120 0.280 0.450 rg
+42.00 518.00 700.00 28.00 re f
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 46.00 535.00 Td (Variant) Tj ET
+1.000 1.000 1.000 rg
+BT /F2 7.8 Tf 266.00 535.00 Td (Methodology) Tj ET
+1.000 1.000 1.000 rg
+42.00 494.00 700.00 24.00 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 494.00 700.00 24.00 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 494.00 m 42.00 518.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 506.00 Td (CamMap baseline) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 262.00 494.00 m 262.00 518.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 266.00 506.00 Td (No explicit depth balancing. The optimizer receives the raw accepted CamMap matches.) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 742.00 494.00 m 742.00 518.00 l S
+0.965 0.975 0.985 rg
+42.00 465.20 700.00 28.80 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 465.20 700.00 28.80 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 465.20 m 42.00 494.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 482.00 Td (Global depth tertiles + 8x8 selected optimization) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 262.00 465.20 m 262.00 494.00 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 266.00 482.00 Td (After CamMap matching, sort all accepted matches globally by source-camera z depth, split into near/middle/far tertiles, spread each) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 266.00 471.60 Td (tertile over an 8x8 image grid, and optimize only selected matches.) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 742.00 465.20 m 742.00 494.00 l S
+1.000 1.000 1.000 rg
+42.00 436.40 700.00 28.80 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 436.40 700.00 28.80 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 436.40 m 42.00 465.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 453.20 Td (Global thresholds + local random uniform selection) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 262.00 436.40 m 262.00 465.20 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 266.00 453.20 Td (Compute global near/far thresholds from source atlas depths, then locally select equal near/middle/far matches per keyframe pair) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 266.00 442.80 Td (using random/uniform selection. No saved numeric output was present for this variant.) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 742.00 436.40 m 742.00 465.20 l S
+0.965 0.975 0.985 rg
+42.00 412.40 700.00 24.00 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 412.40 700.00 24.00 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 412.40 m 42.00 436.40 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 424.40 Td (Global thresholds scoring, all-depth optimization) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 262.00 412.40 m 262.00 436.40 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 266.00 424.40 Td (Use balanced subsets only to score/select keyframe pairs, then run optimization with all original all-depth matches.) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 742.00 412.40 m 742.00 436.40 l S
+1.000 1.000 1.000 rg
+42.00 383.60 700.00 28.80 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 383.60 700.00 28.80 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 383.60 m 42.00 412.40 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 400.40 Td (Frame-to-frame Euclidean tertiles + 8x8 grid) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 262.00 383.60 m 262.00 412.40 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 266.00 400.40 Td (For each accepted keyframe pair, compute average Euclidean camera distance, split into near/middle/far tertiles, distribute over an) Tj ET
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 266.00 390.00 Td (8x8 source-image grid, and optimize selected matches.) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 742.00 383.60 m 742.00 412.40 l S
+0.965 0.975 0.985 rg
+42.00 359.60 700.00 24.00 re f
+0.780 0.820 0.860 RG
+0.30 w 42.00 359.60 700.00 24.00 re S
+0.780 0.820 0.860 RG
+0.25 w 42.00 359.60 m 42.00 383.60 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 46.00 371.60 Td (Current NMC3D equal-width distance-balanced CamMap) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 262.00 359.60 m 262.00 383.60 l S
+0.130 0.150 0.180 rg
+BT /F1 7.4 Tf 266.00 371.60 Td (Same frame-to-frame idea, but uses equal-width near/middle/far distance bins instead of pure equal-count tertiles.) Tj ET
+0.780 0.820 0.860 RG
+0.25 w 742.00 359.60 m 742.00 383.60 l S
+0.070 0.150 0.270 rg
+BT /F2 18.0 Tf 42.00 341.60 Td (Final Conclusion) Tj ET
+0.080 0.320 0.580 rg
+42.00 333.60 110.00 2.50 re f
+0.180 0.200 0.230 rg
+BT /F1 10.0 Tf 42.00 317.60 Td (On the good recording, CamMap is already excellent. Current NMC3D makes the z component almost exact, but increases the) Tj ET
+0.180 0.200 0.230 rg
+BT /F1 10.0 Tf 42.00 303.60 Td (x offset slightly.) Tj ET
+1.000 1.000 1.000 rg
+42.00 231.60 332.00 54.00 re f
+0.820 0.860 0.900 RG
+0.50 w 42.00 231.60 332.00 54.00 re S
+0.080 0.320 0.580 rg
+BT /F2 10.0 Tf 54.00 267.60 Td (Good recording differences) Tj ET
+0.120 0.120 0.120 rg
+BT /F1 9.2 Tf 54.00 250.60 Td (CamMap:        [+0.0354, -0.0057, +0.0094]) Tj ET
+0.120 0.120 0.120 rg
+BT /F1 9.2 Tf 54.00 236.60 Td (Current NMC3D: [+0.0460, -0.0071, -0.0015]) Tj ET
+0.180 0.200 0.230 rg
+BT /F1 10.0 Tf 42.00 211.60 Td (On the multi-depth recording, current NMC3D gives the best translation vector overall, mainly by fixing the depth-axis) Tj ET
+0.180 0.200 0.230 rg
+BT /F1 10.0 Tf 42.00 197.60 Td (component.) Tj ET
+1.000 1.000 1.000 rg
+42.00 125.60 360.00 54.00 re f
+0.820 0.860 0.900 RG
+0.50 w 42.00 125.60 360.00 54.00 re S
+0.080 0.450 0.280 rg
+BT /F2 10.0 Tf 54.00 161.60 Td (Multi-depth differences) Tj ET
+0.120 0.120 0.120 rg
+BT /F1 9.2 Tf 54.00 144.60 Td (CamMap:        [-0.0186, +0.0092, +0.0322]) Tj ET
+0.120 0.120 0.120 rg
+BT /F1 9.2 Tf 54.00 130.60 Td (Current NMC3D: [-0.0179, +0.0085, -0.0020]) Tj ET
+0.070 0.150 0.270 rg
+BT /F1 10.0 Tf 42.00 104.60 Td (Bottom line: the final version is most useful when the scene contains meaningful depth diversity. It reduces depth-axis) Tj ET
+0.070 0.150 0.270 rg
+BT /F1 10.0 Tf 42.00 90.60 Td (bias by preventing the optimizer from being dominated by whichever distance range produced the most raw CamMap matches.) Tj ET
+0.550 0.580 0.620 rg
+BT /F1 7.5 Tf 670.00 24 Td (Page 4 / 4) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 11 0 R /MediaBox [0 0 792 612] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R] /Count 4 >>
+endobj
+12 0 obj
+<< /Type /Catalog /Pages 11 0 R >>
+endobj
+xref
+0 13
+0000000000 65535 f 
+0000000009 00000 n 
+0000000079 00000 n 
+0000000154 00000 n 
+0000002026 00000 n 
+0000002163 00000 n 
+0000015047 00000 n 
+0000015184 00000 n 
+0000020250 00000 n 
+0000020387 00000 n 
+0000026482 00000 n 
+0000026620 00000 n 
+0000026697 00000 n 
+trailer
+<< /Size 13 /Root 12 0 R >>
+startxref
+26748
+%%EOF

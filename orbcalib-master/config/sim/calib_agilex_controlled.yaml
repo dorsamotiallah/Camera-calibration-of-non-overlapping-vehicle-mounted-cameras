@@ -1,0 +1,18 @@
+%YAML:1.0
+
+# Agilex PNG-folder monocular SLAM config for controlled playback.
+Mode: slam
+
+# Set this to 1 when the container has DISPLAY/X11 access and you want to watch
+# ORB-SLAM's Pangolin viewer while the PNG frames are streamed.
+UseViewer: 1
+
+PlaybackAck.Enabled: 1
+PlaybackAck.TopicPrefix: "/orbcalib"
+PlaybackAck.LogEvery: 100
+
+Camera1.Type: 0
+Camera1.Image: "/cam_front/image"
+
+Camera2.Type: 0
+Camera2.Image: "/cam_back/image"

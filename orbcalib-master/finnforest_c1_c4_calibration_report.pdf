@@ -1,0 +1,211 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [7 0 R 9 0 R 11 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+6 0 obj
+<< /Length 3113 >>
+stream
+BT /F2 22 Tf 54.00 788.00 Td (FinnForest C1-C4 Calibration Report) Tj ET
+BT /F1 12 Tf 54.00 760.00 Td (Cammap / Orbcalib result compared with FinnForest ground truth) Tj ET
+BT /F1 10 Tf 54.00 742.00 Td (May 15, 2026) Tj ET
+0.90 0.95 1.00 rg
+54.00 612.00 487.00 102.00 re f
+0.30 0.50 0.70 RG
+54.00 612.00 487.00 102.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F2 11 Tf 66.00 696.00 Td (Short conclusion) Tj ET
+BT /F3 9.5 Tf 66.00 674.00 Td (cammap/orbcalib output matches T14 direction, not T41.) Tj ET
+BT /F3 9.5 Tf 66.00 659.00 Td (Rotation error is about 0.39 degrees.) Tj ET
+BT /F3 9.5 Tf 66.00 644.00 Td (Translation is scaled, as expected for monocular SLAM.) Tj ET
+BT /F3 9.5 Tf 66.00 629.00 Td (After applying scale 2.213, translation error is about 7.1 mm.) Tj ET
+BT /F2 15 Tf 54.00 590.00 Td (1. What We Are Comparing) Tj ET
+54.00 574.00 m 541.00 574.00 l S
+BT /F1 10 Tf 54.00 561.00 Td (We compare the transform printed by cammap/orbcalib against the FinnForest ground truth) Tj ET
+BT /F1 10 Tf 54.00 547.00 Td (transform named T14_opencv_style_cammap_style. The cameras are monocular, so the) Tj ET
+BT /F1 10 Tf 54.00 533.00 Td (estimated translation can have an arbitrary scale. Rotation and translation direction) Tj ET
+BT /F1 10 Tf 54.00 519.00 Td (can still be meaningfully compared.) Tj ET
+0.94 0.94 0.94 rg
+54.00 391.00 487.00 110.00 re f
+0.75 0.75 0.75 RG
+54.00 391.00 487.00 110.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F3 9.2 Tf 66.00 485.00 Td (Estimated cammap/orbcalib) Tj ET
+BT /F3 9.2 Tf 66.00 471.00 Td (  euler: -0.0750192  -56.0893      0.21423) Tj ET
+BT /F3 9.2 Tf 66.00 457.00 Td (  trans: -0.261505    0.00426842  -0.136738) Tj ET
+BT /F3 9.2 Tf 66.00 443.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 429.00 Td (Ground truth: T14_opencv_style_cammap_style) Tj ET
+BT /F3 9.2 Tf 66.00 415.00 Td (  euler:   -0.602037826  -55.909690436   0.836021159) Tj ET
+BT /F3 9.2 Tf 66.00 401.00 Td (  trans_m: -0.581736657   0.006461918  -0.296923530) Tj ET
+BT /F2 15 Tf 54.00 373.00 Td (2. Direction: T14, Not T41) Tj ET
+54.00 357.00 m 541.00 357.00 l S
+BT /F1 10 Tf 54.00 344.00 Td (The estimate has the same sign pattern and orientation direction as T14. If it were T41,) Tj ET
+BT /F1 10 Tf 54.00 330.00 Td (it would follow the inverse transform direction. So the correct comparison for this) Tj ET
+BT /F1 10 Tf 54.00 316.00 Td (result is against T14_opencv_style_cammap_style.) Tj ET
+0.94 0.94 0.94 rg
+54.00 230.00 487.00 68.00 re f
+0.75 0.75 0.75 RG
+54.00 230.00 487.00 68.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F3 9.2 Tf 66.00 282.00 Td (Estimated translation direction: -x, +y, -z) Tj ET
+BT /F3 9.2 Tf 66.00 268.00 Td (GT T14 translation direction:      -x, +y, -z) Tj ET
+BT /F3 9.2 Tf 66.00 254.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 240.00 Td (Conclusion: cammap/orbcalib output ~= scaled T14) Tj ET
+BT /F2 15 Tf 54.00 212.00 Td (3. Rotation Result) Tj ET
+54.00 196.00 m 541.00 196.00 l S
+BT /F1 10 Tf 54.00 183.00 Td (The Euler differences are small, but Euler angles are only a component-wise view. The) Tj ET
+BT /F1 10 Tf 54.00 169.00 Td (cleaner single number is the relative rotation angle between the two rotation matrices.) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 3343 >>
+stream
+0.94 0.94 0.94 rg
+54.00 682.00 487.00 110.00 re f
+0.75 0.75 0.75 RG
+54.00 682.00 487.00 110.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F3 9.2 Tf 66.00 776.00 Td (Euler difference = estimated - ground truth) Tj ET
+BT /F3 9.2 Tf 66.00 762.00 Td (  roll:   +0.527018626 deg) Tj ET
+BT /F3 9.2 Tf 66.00 748.00 Td (  pitch:  -0.179609564 deg) Tj ET
+BT /F3 9.2 Tf 66.00 734.00 Td (  yaw:    -0.621791159 deg) Tj ET
+BT /F3 9.2 Tf 66.00 720.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 706.00 Td (True rotation error:) Tj ET
+BT /F3 9.2 Tf 66.00 692.00 Td (  0.391523 deg) Tj ET
+0.90 0.95 1.00 rg
+54.00 613.00 487.00 57.00 re f
+0.30 0.50 0.70 RG
+54.00 613.00 487.00 57.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F2 11 Tf 66.00 652.00 Td (Rotation interpretation) Tj ET
+BT /F3 9.5 Tf 66.00 630.00 Td (The orientation estimate is very close to the FinnForest ground truth.) Tj ET
+BT /F2 15 Tf 54.00 591.00 Td (4. Raw Translation Result) Tj ET
+54.00 575.00 m 541.00 575.00 l S
+BT /F1 10 Tf 54.00 562.00 Td (Before correcting monocular scale, the translation magnitude looks too small. This is) Tj ET
+BT /F1 10 Tf 54.00 548.00 Td (expected: monocular SLAM cannot know metric scale from images alone.) Tj ET
+0.94 0.94 0.94 rg
+54.00 378.00 487.00 152.00 re f
+0.75 0.75 0.75 RG
+54.00 378.00 487.00 152.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F3 9.2 Tf 66.00 514.00 Td (Raw translation vectors) Tj ET
+BT /F3 9.2 Tf 66.00 500.00 Td (  estimated: -0.261505     0.00426842  -0.136738) Tj ET
+BT /F3 9.2 Tf 66.00 486.00 Td (  GT T14:    -0.581736657  0.006461918 -0.296923530) Tj ET
+BT /F3 9.2 Tf 66.00 472.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 458.00 Td (Vector lengths) Tj ET
+BT /F3 9.2 Tf 66.00 444.00 Td (  |estimated| = 0.295128) Tj ET
+BT /F3 9.2 Tf 66.00 430.00 Td (  |GT|        = 0.653164) Tj ET
+BT /F3 9.2 Tf 66.00 416.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 402.00 Td (Raw residual norm without scale correction:) Tj ET
+BT /F3 9.2 Tf 66.00 388.00 Td (  0.358068 m) Tj ET
+BT /F2 15 Tf 54.00 360.00 Td (5. Monocular Scale Correction) Tj ET
+54.00 344.00 m 541.00 344.00 l S
+BT /F1 10 Tf 54.00 331.00 Td (To compare a monocular result against metric ground truth, we allow one global scale) Tj ET
+BT /F1 10 Tf 54.00 317.00 Td (factor on the estimated translation. Rotation is not scaled. Only the translation vector) Tj ET
+BT /F1 10 Tf 54.00 303.00 Td (is multiplied by a single number.) Tj ET
+0.94 0.94 0.94 rg
+54.00 161.00 487.00 124.00 re f
+0.75 0.75 0.75 RG
+54.00 161.00 487.00 124.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F3 9.2 Tf 66.00 269.00 Td (scaled_estimated_translation = s * estimated_translation) Tj ET
+BT /F3 9.2 Tf 66.00 255.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 241.00 Td (Best least-squares scale:) Tj ET
+BT /F3 9.2 Tf 66.00 227.00 Td (  s = dot\(estimated, GT\) / dot\(estimated, estimated\)) Tj ET
+BT /F3 9.2 Tf 66.00 213.00 Td (  s = 2.213025814) Tj ET
+BT /F3 9.2 Tf 66.00 199.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 185.00 Td (Length-ratio check:) Tj ET
+BT /F3 9.2 Tf 66.00 171.00 Td (  |GT| / |estimated| = 2.213156281) Tj ET
+BT /F1 10 Tf 54.00 149.00 Td (This means the cammap/orbcalib translation is about 0.4518 of the ground-truth metric) Tj ET
+BT /F1 10 Tf 54.00 135.00 Td (scale. Equivalently, multiply the estimated translation by about 2.213 to compare it in) Tj ET
+BT /F1 10 Tf 54.00 121.00 Td (meters.) Tj ET
+BT /F2 15 Tf 54.00 93.00 Td (6. After Applying Scale) Tj ET
+54.00 77.00 m 541.00 77.00 l S
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 2277 >>
+stream
+0.94 0.94 0.94 rg
+54.00 626.00 487.00 166.00 re f
+0.75 0.75 0.75 RG
+54.00 626.00 487.00 166.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F3 9.2 Tf 66.00 776.00 Td (Scaled estimated translation) Tj ET
+BT /F3 9.2 Tf 66.00 762.00 Td (  -0.57871732   0.00944612  -0.30260472) Tj ET
+BT /F3 9.2 Tf 66.00 748.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 734.00 Td (Ground-truth T14 translation) Tj ET
+BT /F3 9.2 Tf 66.00 720.00 Td (  -0.581736657  0.006461918 -0.296923530) Tj ET
+BT /F3 9.2 Tf 66.00 706.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 692.00 Td (Scaled residual) Tj ET
+BT /F3 9.2 Tf 66.00 678.00 Td (   0.00301934   0.00298421  -0.00568119) Tj ET
+BT /F3 9.2 Tf 66.00 664.00 Td () Tj ET
+BT /F3 9.2 Tf 66.00 650.00 Td (Scaled translation error norm:) Tj ET
+BT /F3 9.2 Tf 66.00 636.00 Td (  0.007092 m  ~=  7.1 mm) Tj ET
+0.90 0.95 1.00 rg
+54.00 527.00 487.00 87.00 re f
+0.30 0.50 0.70 RG
+54.00 527.00 487.00 87.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F2 11 Tf 66.00 596.00 Td (Translation interpretation) Tj ET
+BT /F3 9.5 Tf 66.00 574.00 Td (The translation direction is correct.) Tj ET
+BT /F3 9.5 Tf 66.00 559.00 Td (The translation magnitude differs because of monocular scale.) Tj ET
+BT /F3 9.5 Tf 66.00 544.00 Td (After one scale correction, the translation is very close to ground truth.) Tj ET
+BT /F2 15 Tf 54.00 505.00 Td (7. Final Interpretation) Tj ET
+54.00 489.00 m 541.00 489.00 l S
+BT /F1 10 Tf 54.00 476.00 Td (This calibration result is strong. It should be read as a monocular-scale estimate of) Tj ET
+BT /F1 10 Tf 54.00 462.00 Td (T14. The rotation is close, the translation direction is close, and the metric) Tj ET
+BT /F1 10 Tf 54.00 448.00 Td (translation agrees well after applying the single global scale factor.) Tj ET
+0.94 0.94 0.94 rg
+54.00 334.00 487.00 96.00 re f
+0.75 0.75 0.75 RG
+54.00 334.00 487.00 96.00 re S
+0 0 0 rg 0 0 0 RG
+BT /F3 9.2 Tf 66.00 414.00 Td (Final compact result) Tj ET
+BT /F3 9.2 Tf 66.00 400.00 Td (  Direction:                    T14) Tj ET
+BT /F3 9.2 Tf 66.00 386.00 Td (  Rotation error:               0.391523 deg) Tj ET
+BT /F3 9.2 Tf 66.00 372.00 Td (  Monocular scale factor:       2.213025814) Tj ET
+BT /F3 9.2 Tf 66.00 358.00 Td (  Translation direction error:  0.622134 deg) Tj ET
+BT /F3 9.2 Tf 66.00 344.00 Td (  Scaled translation error:     0.007092 m) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 10 0 R >>
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000134 00000 n 
+0000000204 00000 n 
+0000000279 00000 n 
+0000000347 00000 n 
+0000003512 00000 n 
+0000003658 00000 n 
+0000007053 00000 n 
+0000007199 00000 n 
+0000009529 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+9677
+%%EOF

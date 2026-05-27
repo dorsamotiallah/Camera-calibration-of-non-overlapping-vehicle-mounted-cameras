@@ -1,0 +1,46 @@
+%YAML:1.0
+
+# Physical Agilex left camera.
+# TODO: Replace the intrinsic/distortion values with the real calibration for
+# this camera. The current values are only a 1920x1080 placeholder scaled from
+# the old 640x480 Gazebo config, so they are not a real calibration.
+
+# System.LoadAtlasFromFile: "left_atlas"
+# System.SaveAtlasToFile: "left_atlas"
+
+File.version: "1.0"
+Camera.type: "PinHole"
+
+Camera1.fx: 1565.7997668156135
+Camera1.fy: 1174.3498251117101
+Camera1.cx: 960.0
+Camera1.cy: 540.0
+
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
+Camera1.k3: 0.0
+
+Camera.width: 1920
+Camera.height: 1080
+Camera.fps: 10
+Camera.RGB: 1
+Camera.bf: 32.0
+
+ORBextractor.nFeatures: 5000
+ORBextractor.scaleFactor: 1.15
+ORBextractor.nLevels: 10
+ORBextractor.iniThFAST: 10
+ORBextractor.minThFAST: 3
+
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -3.5
+Viewer.ViewpointF: 500.0

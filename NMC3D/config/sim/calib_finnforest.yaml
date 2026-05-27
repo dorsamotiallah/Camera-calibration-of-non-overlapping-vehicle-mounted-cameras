@@ -1,0 +1,16 @@
+%YAML:1.0
+
+# FinnForest C1/C4 calibration config for NMC3D.
+# Atlases are already built; this file is for calibration mode only.
+
+# slam or calib
+Mode: calib
+
+# 0 for mono
+# 1 for stereo
+# 2 for rgbd
+Camera1.Type: 0
+Camera1.Image: "/cam_c1/image"
+
+Camera2.Type: 0
+Camera2.Image: "/cam_c4/image"

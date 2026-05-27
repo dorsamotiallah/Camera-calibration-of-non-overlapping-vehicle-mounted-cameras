@@ -1,0 +1,25 @@
+%YAML:1.0
+
+# slam or calib
+Mode: calib
+
+# 0 for mono
+# 1 for stero
+# 2 for rgbd
+Camera1.Type: 0
+Camera1.Image: "/cam_front/image"
+Camera1.Depth: "/cam_front/depth_image"
+
+
+Camera2.Type: 0
+Camera2.Image: "/cam_back/image"
+Camera2.Depth: "/cam_back/depth_image"
+
+# Optional metric scaling for monocular atlas calibration.
+# When disabled, calibration behaves exactly like the original Sim3 pipeline.
+Calibration.UseMetricScale: 0
+Calibration.FixScaleAfterMetric: 0
+Calibration.UseMetricScalePrior: 0
+Calibration.MetricScalePriorWeight: 0.0
+Camera1.MetricScale: 0.29
+Camera2.MetricScale: 3.75

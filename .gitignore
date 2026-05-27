@@ -1,0 +1,36 @@
+# Ignore everything in this workspace by default.
+/*
+
+# Keep only the project folders we want to version.
+!/.gitignore
+!/orbcalib-master/
+!/NMC3D/
+
+# Ignore heavy/generated outputs inside the kept folders.
+orbcalib-master/build/
+orbcalib-master/build_*/
+orbcalib-master/devel/
+orbcalib-master/install/
+orbcalib-master/results_*/
+orbcalib-master/**/*.log
+orbcalib-master/**/*.osa
+orbcalib-master/**/*atlasCamera*.osa
+orbcalib-master/**/*.bag
+orbcalib-master/**/*.mcap
+orbcalib-master/**/__pycache__/
+orbcalib-master/**/*.pyc
+orbcalib-master/**/.DS_Store
+
+NMC3D/build/
+NMC3D/build_*/
+NMC3D/devel/
+NMC3D/install/
+NMC3D/results_*/
+NMC3D/**/*.log
+NMC3D/**/*.osa
+NMC3D/**/*atlasCamera*.osa
+NMC3D/**/*.bag
+NMC3D/**/*.mcap
+NMC3D/**/__pycache__/
+NMC3D/**/*.pyc
+NMC3D/**/.DS_Store

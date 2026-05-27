@@ -1,0 +1,27 @@
+%YAML:1.0
+
+# FinnForest C1/C4 monocular calibration config.
+# Keep the original config/sim/calib.yaml for the Gazebo / RGB-D workflow.
+
+# slam or calib
+Mode: calib
+
+# 0 disables Pangolin/OpenCV viewers during atlas building. This keeps the
+# SLAM/calibration logic unchanged but removes GUI overhead.
+UseViewer: 0
+
+# Optional controlled-playback ACKs.
+# Keep disabled for the normal rosbag play workflow.
+# The controlled FinnForest runbook uses calib_finnforest_controlled.yaml.
+PlaybackAck.Enabled: 0
+PlaybackAck.TopicPrefix: "/orbcalib"
+PlaybackAck.LogEvery: 100
+
+# 0 for mono
+# 1 for stereo
+# 2 for rgbd
+Camera1.Type: 0
+Camera1.Image: "/cam_c1/image"
+
+Camera2.Type: 0
+Camera2.Image: "/cam_c4/image"
