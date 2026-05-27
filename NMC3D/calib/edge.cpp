@@ -116,22 +116,4 @@ bool EdgeInverseSim3ProjectXYZForCalibr::write(std::ostream& os) const
     return os.good();
 }
 
-EdgeSim3ScalePrior::EdgeSim3ScalePrior() :
-    BaseUnaryEdge<1, double, VertexSim3Expmap>()
-{
-}
-
-bool EdgeSim3ScalePrior::read(std::istream& is)
-{
-    is >> _measurement;
-    is >> information()(0, 0);
-    return true;
-}
-
-bool EdgeSim3ScalePrior::write(std::ostream& os) const
-{
-    os << _measurement << " " << information()(0, 0);
-    return os.good();
-}
-
 } // namespace g2o

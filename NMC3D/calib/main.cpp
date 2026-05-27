@@ -112,53 +112,6 @@ int main(int argc, char **argv)
     string camera1depth = (string)fsSettings["Camera1.Depth"];
     string camera2depth = (string)fsSettings["Camera2.Depth"];
 
-    bool useMetricScale = false;
-    cv::FileNode useMetricScaleNode = fsSettings["Calibration.UseMetricScale"];
-    if(!useMetricScaleNode.empty())
-        useMetricScale = ((int)useMetricScaleNode) != 0;
-
-    bool fixScaleAfterMetric = false;
-    cv::FileNode fixScaleAfterMetricNode = fsSettings["Calibration.FixScaleAfterMetric"];
-    if(!fixScaleAfterMetricNode.empty())
-        fixScaleAfterMetric = ((int)fixScaleAfterMetricNode) != 0;
-    if(!useMetricScale)
-        fixScaleAfterMetric = false;
-
-    bool useMetricScalePrior = false;
-    cv::FileNode useMetricScalePriorNode = fsSettings["Calibration.UseMetricScalePrior"];
-    if(!useMetricScalePriorNode.empty())
-        useMetricScalePrior = ((int)useMetricScalePriorNode) != 0;
-
-    double metricScalePriorWeight = 0.0;
-    cv::FileNode metricScalePriorWeightNode = fsSettings["Calibration.MetricScalePriorWeight"];
-    if(!metricScalePriorWeightNode.empty())
-        metricScalePriorWeight = (double)metricScalePriorWeightNode;
-    if(!useMetricScale || metricScalePriorWeight <= 0.0)
-        useMetricScalePrior = false;
-
-    double metricScale1 = 1.0;
-    double metricScale2 = 1.0;
-    cv::FileNode metricScale1Node = fsSettings["Camera1.MetricScale"];
-    cv::FileNode metricScale2Node = fsSettings["Camera2.MetricScale"];
-    if(!metricScale1Node.empty())
-        metricScale1 = (double)metricScale1Node;
-    if(!metricScale2Node.empty())
-        metricScale2 = (double)metricScale2Node;
-
-    if(useMetricScale)
-    {
-        cout << "metric scale calibration enabled" << endl;
-        cout << "  Camera1.MetricScale: " << metricScale1 << " m / SLAM unit" << endl;
-        cout << "  Camera2.MetricScale: " << metricScale2 << " m / SLAM unit" << endl;
-        cout << "  Calibration.FixScaleAfterMetric: " << fixScaleAfterMetric << endl;
-        cout << "  Calibration.UseMetricScalePrior: " << useMetricScalePrior << endl;
-        cout << "  Calibration.MetricScalePriorWeight: " << metricScalePriorWeight << endl;
-    }
-    else
-    {
-        cout << "metric scale calibration disabled; using raw atlas-unit Sim3 calibration" << endl;
-    }
-
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     ORB_SLAM3::System SLAM1(argv[1], argv[3], static_cast<ORB_SLAM3::System::eSensor>(camera1type), use_viewer, 0, "Camera 1");
     ORB_SLAM3::System SLAM2(argv[1], argv[4], static_cast<ORB_SLAM3::System::eSensor>(camera2type), use_viewer, 0, "Camera 2");
@@ -166,8 +119,7 @@ int main(int argc, char **argv)
     if(mode == "calib"){
         cout << "atlas are loaded!!" << endl;
         cout << "start to calib..." << endl;
-        CalibC2C c2c(&SLAM1, &SLAM2, useMetricScale, metricScale1, metricScale2,
-            fixScaleAfterMetric, useMetricScalePrior, metricScalePriorWeight);
+        CalibC2C c2c(&SLAM1, &SLAM2);
         c2c.RunCalib();        
         cout << "calib finish, exit" << endl;
         return 0;

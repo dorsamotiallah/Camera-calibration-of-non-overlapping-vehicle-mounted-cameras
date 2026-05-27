@@ -11,10 +11,3 @@ Camera1.Image: "/cam_front/image"
 
 Camera2.Type: 0
 Camera2.Image: "/cam_back/image"
-
-Calibration.UseMetricScale: 0
-Calibration.FixScaleAfterMetric: 0
-Calibration.UseMetricScalePrior: 0
-Calibration.MetricScalePriorWeight: 0.0
-Camera1.MetricScale: 1.0
-Camera2.MetricScale: 1.0

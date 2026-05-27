@@ -181,14 +181,7 @@ size_t SelectFrameGridDistributedRefs(KeyFrame* pKF1, const vector<GlobalDepthMa
 
 }
 
-CalibC2C::CalibC2C(System* src, System* dst, bool useMetricScale, double scale1, double scale2, bool fixScale,
-    bool useMetricScalePrior, double metricScalePriorWeight)
-    : bFixScale(fixScale),
-      mbUseMetricScale(useMetricScale),
-      mbUseMetricScalePrior(useMetricScale && useMetricScalePrior && metricScalePriorWeight > 0.0),
-      mScale1(scale1 > 0.0 ? scale1 : 1.0),
-      mScale2(scale2 > 0.0 ? scale2 : 1.0),
-      mMetricScalePriorWeight(metricScalePriorWeight > 0.0 ? metricScalePriorWeight : 0.0)
+CalibC2C::CalibC2C(System* src, System* dst)
 {
     // get Atlas
     SubSystem* ssrc = static_cast<SubSystem*>(src);
@@ -208,14 +201,6 @@ CalibC2C::CalibC2C(System* src, System* dst, bool useMetricScale, double scale1,
 
     mpLC = new SubLoopClosing();
 
-    if(mbUseMetricScale)
-    {
-        cout << "CalibC2C metric mode: source scale " << mScale1
-             << ", destination scale " << mScale2
-             << ", fix optimizer scale " << bFixScale
-             << ", scale prior " << mbUseMetricScalePrior
-             << ", scale prior weight " << mMetricScalePriorWeight << endl;
-    }
 }
 
 vector<KeyFrame*> CalibC2C::DetectNBestCandidates(KeyFrame* pKF, int N)
@@ -535,16 +520,6 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
     vSim3->setId(0);
     optimizer.addVertex(vSim3);
 
-    g2o::EdgeSim3ScalePrior* eScalePrior = nullptr;
-    if(mbUseMetricScalePrior && !bFixScale)
-    {
-        eScalePrior = new g2o::EdgeSim3ScalePrior();
-        eScalePrior->setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex *>(optimizer.vertex(0)));
-        eScalePrior->setMeasurement(1.0);
-        eScalePrior->setInformation(Eigen::Matrix<double, 1, 1>::Identity() * mMetricScalePriorWeight);
-        optimizer.addEdge(eScalePrior);
-    }
-
     // 3. set vertex of map points
     int nKF = vpKF1s.size();
     int nCorrespondences = 0;
@@ -575,11 +550,6 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
         R2w = P2w.rotation().cast<double>();
         t1w = P1w.translation().cast<double>();
         t2w = P2w.translation().cast<double>();
-        if(mbUseMetricScale)
-        {
-            t1w *= mScale1;
-            t2w *= mScale2;
-        }
 
         for(int i=0; i<N; i++){
             if(!vpMatches[i])   continue;
@@ -600,8 +570,6 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
             Eigen::Vector3f P3D1w = pMP1->GetWorldPos();
             // trans to final if need
             P3D1w = finalPose1.inverse() * P3D1w;
-            if(mbUseMetricScale)
-                P3D1w *= static_cast<float>(mScale1);
             vPoint1->setEstimate(P3D1w.cast<double>());
             vPoint1->setId(id1);
             vPoint1->setFixed(true);
@@ -611,8 +579,6 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
             g2o::VertexSBAPointXYZ *vPoint2 = new g2o::VertexSBAPointXYZ();
             Eigen::Vector3f P3D2w = pMP2->GetWorldPos();
             P3D2w = finalPose2.inverse() * P3D2w;
-            if(mbUseMetricScale)
-                P3D2w *= static_cast<float>(mScale2);
             vPoint2->setEstimate(P3D2w.cast<double>());
             vPoint2->setId(id2);
             vPoint2->setFixed(true);
@@ -716,13 +682,6 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
     SumChi2 /= (2 * (nCorrespondences - outliers));
     g2o::VertexSim3Expmap *vSim3_recov = static_cast<g2o::VertexSim3Expmap *>(optimizer.vertex(0));
     g2oS12 = vSim3_recov->estimate();
-    if(eScalePrior)
-    {
-        cout << "metric scale prior residual: " << eScalePrior->error()[0]
-             << ", chi2: " << eScalePrior->chi2()
-             << ", optimized metric scale: " << g2oS12.scale() << endl;
-    }
-
     return nCorrespondences - outliers;
 }
 
@@ -737,12 +696,6 @@ void printResult(const g2o::Sim3& pose, const string& header)
     Eigen::Vector3d t = pose.translation();
     for(int i=0; i<3; i++)  cout << t(i) << " ";
     cout << endl;
-}
-
-g2o::Sim3 CalibC2C::ToMetricSim3(const g2o::Sim3& rawPose, bool forceUnitScale) const
-{
-    const double metricScale = forceUnitScale ? 1.0 : rawPose.scale() * mScale2 / mScale1;
-    return g2o::Sim3(rawPose.rotation(), rawPose.translation() * mScale2, metricScale);
 }
 
 vector<MapPoint*> CalibC2C::SelectFrameDepthBalancedMatches(KeyFrame* pKF1, KeyFrame* pKF2, const vector<MapPoint*>& vpMatches)
@@ -1111,8 +1064,6 @@ void CalibC2C::RunCalib()
                 Eigen::Vector3d t = g2oS12.translation();
                 for(int i=0; i<3; i++)  cout << t(i) << " ";
                 cout << endl;
-                if(mbUseMetricScale)
-                    printResult(ToMetricSim3(g2oS12, bFixScale), "---- before final optim metric scaled ----");
             }
             rsrc.push_back(kf);
             rdst.push_back(matchedKF);
@@ -1129,24 +1080,22 @@ void CalibC2C::RunCalib()
     cout << "matched mps selected during frame-to-frame matching size: " << CountMatches(mmps) << endl;
     PrintGlobalDistanceDistribution(rsrc, rdst, mmps);
     printResult(g2oS12, "---- before first global optim raw atlas units ----");
-    if(mbUseMetricScale)
-        printResult(ToMetricSim3(g2oS12, bFixScale), "---- before first global optim metric scaled ----");
 
-    g2o::Sim3 firstPose = mbUseMetricScale ? ToMetricSim3(g2oS12, bFixScale) : g2oS12;
+    g2o::Sim3 firstPose = g2oS12;
     // global optimization at first place
     cout << "matched kfs involve in optim size: " << rsrc.size() << endl;
     int inliers = OptimizeSim3ForCalibr(rsrc, rdst, mmps, firstPose, 10, bFixScale);
     cout << "inliers size: " << inliers << endl;
-    printResult(firstPose, mbUseMetricScale ? "---- first pose optim metric ----" : "---- first pose optim ----");
+    printResult(firstPose, "---- first pose optim ----");
     
     // global optimization at final place
-    g2o::Sim3 finalPose = mbUseMetricScale ? ToMetricSim3(g2oS12, bFixScale) : g2oS12;
+    g2o::Sim3 finalPose = g2oS12;
     Eigen::Isometry3f finalPose1, finalPose2;
     // Twc camera expressed at world frame
     finalPose1.matrix() = srcKFs.back()->GetPoseInverse().matrix();
     finalPose2.matrix() = dstKFs.back()->GetPoseInverse().matrix();
     inliers = OptimizeSim3ForCalibr(rsrc, rdst, mmps, finalPose, 10, bFixScale, finalPose1, finalPose2);
     cout << "inliers size: " << inliers << endl;
-    printResult(finalPose, mbUseMetricScale ? "---- final pose optim metric ----" : "---- final pose optim ----");
+    printResult(finalPose, "---- final pose optim ----");
 
 }

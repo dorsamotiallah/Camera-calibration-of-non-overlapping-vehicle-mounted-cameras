@@ -6,8 +6,6 @@
 #include "Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h"
 #include "Thirdparty/g2o/g2o/types/sim3.h"
 
-#include <cmath>
-
 namespace g2o
 {
     
@@ -61,23 +59,5 @@ public:
    // virtual void linearizeOplus();
 
 };
-
-class EdgeSim3ScalePrior : public BaseUnaryEdge<1, double, VertexSim3Expmap>
-{
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-    EdgeSim3ScalePrior();
-    virtual bool read(std::istream& is);
-    virtual bool write(std::ostream& os) const;
-
-    void computeError()
-    {
-        const VertexSim3Expmap* v = static_cast<const VertexSim3Expmap*>(_vertices[0]);
-        const double targetScale = std::max(_measurement, 1e-12);
-        const double estimatedScale = std::max(v->estimate().scale(), 1e-12);
-        _error[0] = std::log(estimatedScale / targetScale);
-    }
-};
-
 
 } // namespace g2o

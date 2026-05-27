@@ -73,15 +73,9 @@ private:
     const float bestCandTh = 0.75f;
     const int bestCandNum = 10;
     bool bFixScale = false;
-    bool mbUseMetricScale = false;
-    bool mbUseMetricScalePrior = false;
-    double mScale1 = 1.0;
-    double mScale2 = 1.0;
-    double mMetricScalePriorWeight = 0.0;
 
 public:
-    CalibC2C(System* src, System* dst, bool useMetricScale=false, double scale1=1.0, double scale2=1.0,
-        bool fixScale=false, bool useMetricScalePrior=false, double metricScalePriorWeight=0.0);
+    CalibC2C(System* src, System* dst);
 
     vector<KeyFrame*> DetectNBestCandidates(KeyFrame* pKF, int N);
 
@@ -91,8 +85,6 @@ public:
     int OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vector<KeyFrame*>& vpKF2s, vector<vector<MapPoint*>>& vvpMatches,
         g2o::Sim3 &g2oS12, const float th2, const bool bFixScale,
         Eigen::Isometry3f finalPose1 = Eigen::Isometry3f::Identity(), Eigen::Isometry3f finalPose2 = Eigen::Isometry3f::Identity());
-
-    g2o::Sim3 ToMetricSim3(const g2o::Sim3& rawPose, bool forceUnitScale=false) const;
 
     void RunCalib();
 

@@ -14,12 +14,3 @@ Camera1.Depth: "/cam_front/depth_image"
 Camera2.Type: 0
 Camera2.Image: "/cam_back/image"
 Camera2.Depth: "/cam_back/depth_image"
-
-# Optional metric scaling for monocular atlas calibration.
-# When disabled, calibration behaves exactly like the original Sim3 pipeline.
-Calibration.UseMetricScale: 1
-Calibration.FixScaleAfterMetric: 0
-Calibration.UseMetricScalePrior: 1
-Calibration.MetricScalePriorWeight: 10.0
-Camera1.MetricScale: 0.29222069
-Camera2.MetricScale: 4.1170722
