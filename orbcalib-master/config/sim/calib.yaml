@@ -6,11 +6,11 @@ Mode: calib
 # 0 for mono
 # 1 for stero
 # 2 for rgbd
-Camera1.Type: 0
+Camera1.Type: 2
 Camera1.Image: "/cam_front/image"
 Camera1.Depth: "/cam_front/depth_image"
 
 
-Camera2.Type: 0
+Camera2.Type: 2
 Camera2.Image: "/cam_back/image"
 Camera2.Depth: "/cam_back/depth_image"

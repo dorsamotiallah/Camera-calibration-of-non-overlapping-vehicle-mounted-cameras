@@ -2,10 +2,13 @@
 
 # If the LoadFile doesn't exist, the system gives a message and creates a new Atlas from scratch
 # System.LoadAtlasFromFile: "back_mono_atlas"
-System.LoadAtlasFromFile: "back_mono_metric_refined_atlas"
+# System.LoadAtlasFromFile: "back_mono_2_atlas"
+System.LoadAtlasFromFile: "back_RGBD_atlas"
 
 # The store file is created from the current session. If a file with the same name exists it is deleted
 # System.SaveAtlasToFile: "back_mono_atlas"
+# System.SaveAtlasToFile: "back_mono_2_atlas"
+System.SaveAtlasToFile: "ba7ck_RGBD_atlas"
 
 #--------------------------------------------------------------------------------------------
 # Camera Parameters
