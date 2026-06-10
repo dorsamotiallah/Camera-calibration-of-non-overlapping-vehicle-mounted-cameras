@@ -9,7 +9,18 @@
 #include "System.h"
 #include "Atlas.h"
 
+#include <map>
+#include <string>
+
 using namespace ORB_SLAM3;
+
+struct MapScaleConfig
+{
+    bool useGlobalMapScales = false;
+    bool fixScaleAfterGlobalScaling = false;
+    double camera1GlobalScale = 1.0;
+    double camera2GlobalScale = 1.0;
+};
 
 class SubKeyFrameDB : public KeyFrameDatabase
 {
@@ -73,9 +84,10 @@ private:
     const float bestCandTh = 0.75f;
     const int bestCandNum = 10;
     bool bFixScale = false;
+    MapScaleConfig mScaleConfig;
 
 public:
-    CalibC2C(System* src, System* dst);
+    CalibC2C(System* src, System* dst, const MapScaleConfig& scaleConfig = MapScaleConfig());
 
     vector<KeyFrame*> DetectNBestCandidates(KeyFrame* pKF, int N);
 
@@ -84,8 +96,11 @@ public:
 
     int OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vector<KeyFrame*>& vpKF2s, vector<vector<MapPoint*>>& vvpMatches,
         g2o::Sim3 &g2oS12, const float th2, const bool bFixScale,
-        Eigen::Isometry3f finalPose1 = Eigen::Isometry3f::Identity(), Eigen::Isometry3f finalPose2 = Eigen::Isometry3f::Identity());
+        Eigen::Isometry3f finalPose1 = Eigen::Isometry3f::Identity(), Eigen::Isometry3f finalPose2 = Eigen::Isometry3f::Identity(),
+        const string& debugInliersCsvPath = "");
 
     void RunCalib();
+
+private:
 
 };

@@ -22,6 +22,9 @@ function result = estimate_ground_plane_from_atlas_csv(csvPath, cameraHeightMete
 %   UseBottomCandidates Fit planes only from bottom-image map points. Default true.
 %   ReferenceNormal   1x3 normal in SLAM frame. Default [].
 %   MaxAngularDistance Degrees for ReferenceNormal constraint. Default 20.
+%   BelowPlaneTolerance Signed-distance tolerance for points below ground.
+%                     Default [] uses MaxDistance.
+%   BelowPlaneWeight  Penalty weight for points below ground. Default 1.5.
 %   Visualize         Show MATLAB figure. Default true.
 %   OutputDir         Optional directory for selected-plane summary files.
 
@@ -35,10 +38,15 @@ parser.addParameter("MinInliers", 50, @(x) isnumeric(x) && isscalar(x) && x >= 3
 parser.addParameter("UseBottomCandidates", true, @(x) islogical(x) && isscalar(x));
 parser.addParameter("ReferenceNormal", [], @(x) isempty(x) || (isnumeric(x) && numel(x) == 3));
 parser.addParameter("MaxAngularDistance", 20, @(x) isnumeric(x) && isscalar(x) && x > 0);
+parser.addParameter("BelowPlaneTolerance", [], @(x) isempty(x) || (isnumeric(x) && isscalar(x) && x >= 0));
+parser.addParameter("BelowPlaneWeight", 1.5, @(x) isnumeric(x) && isscalar(x) && x >= 0);
 parser.addParameter("Visualize", true, @(x) islogical(x) && isscalar(x));
 parser.addParameter("OutputDir", "", @(x) ischar(x) || isstring(x));
 parser.parse(csvPath, cameraHeightMeters, varargin{:});
 opts = parser.Results;
+if isempty(opts.BelowPlaneTolerance)
+    opts.BelowPlaneTolerance = opts.MaxDistance;
+end
 
 if exist("pcfitplane", "file") ~= 2
     error("pcfitplane was not found. MATLAB Computer Vision Toolbox is required.");
@@ -106,7 +114,7 @@ for iPlane = 1:opts.NumPlanes
     normal = normal / max(norm(normal), eps);
     d = params(4) / max(norm(params(1:3)), eps);
 
-    candidate = score_plane(points, cameras, bottomRatio, inlierIdx, normal, d);
+    candidate = score_plane(points, cameras, bottomRatio, inlierIdx, normal, d, opts);
     planes = [planes; candidate]; %#ok<AGROW>
 
     remaining(localInliers) = [];
@@ -137,6 +145,8 @@ fprintf("  score: %.4f\n", best.score);
 fprintf("  inliers: %d (%.2f%%)\n", numel(best.inlierIdx), 100 * numel(best.inlierIdx) / nMP);
 fprintf("  bottom image ratio: %.2f%%\n", 100 * best.bottomScore);
 fprintf("  camera side ratio: %.2f%%\n", 100 * best.cameraSideRatio);
+fprintf("  below-plane ratio: %.2f%%\n", 100 * best.belowPlaneRatio);
+fprintf("  below-plane depth score: %.4f\n", best.belowPlaneDepthScore);
 fprintf("  height consistency: %.4f\n", best.heightConsistency);
 fprintf("  spatial coverage: %.4f\n", best.coverage);
 fprintf("  median camera-plane height: %.8g SLAM units\n", best.medianHeightSlam);
@@ -165,7 +175,7 @@ end
 
 end
 
-function candidate = score_plane(points, cameras, bottomRatio, inlierIdx, normal, d)
+function candidate = score_plane(points, cameras, bottomRatio, inlierIdx, normal, d, opts)
 cameraSigned = cameras * normal(:) + d;
 if median(cameraSigned) < 0
     normal = -normal;
@@ -179,6 +189,11 @@ madHeight = median(abs(cameraDistances - medianHeight));
 heightConsistency = 1 / (1 + madHeight / max(medianHeight, eps));
 cameraSideRatio = mean(cameraSigned > 0);
 
+pointSigned = points * normal(:) + d;
+belowDepth = max(-(pointSigned + opts.BelowPlaneTolerance), 0);
+belowPlaneRatio = mean(belowDepth > 0);
+belowPlaneDepthScore = mean(min(belowDepth / max(medianHeight, eps), 1));
+
 bottomScore = mean(bottomRatio(inlierIdx));
 inlierRatio = numel(inlierIdx) / size(points, 1);
 coverage = plane_coverage(points(inlierIdx, :));
@@ -187,7 +202,8 @@ score = 1.50 * inlierRatio ...
       + 1.25 * bottomScore ...
       + 1.25 * cameraSideRatio ...
       + 1.00 * heightConsistency ...
-      + 0.75 * coverage;
+      + 0.75 * coverage ...
+      - opts.BelowPlaneWeight * (belowPlaneRatio + belowPlaneDepthScore);
 
 candidate = struct( ...
     "normal", normal, ...
@@ -195,6 +211,8 @@ candidate = struct( ...
     "score", score, ...
     "bottomScore", bottomScore, ...
     "cameraSideRatio", cameraSideRatio, ...
+    "belowPlaneRatio", belowPlaneRatio, ...
+    "belowPlaneDepthScore", belowPlaneDepthScore, ...
     "heightConsistency", heightConsistency, ...
     "coverage", coverage, ...
     "medianHeightSlam", medianHeight, ...
@@ -291,6 +309,8 @@ fprintf(fid, "score: %.12g\n", result.score);
 fprintf(fid, "inliers: %d\n", numel(result.inlierIdx));
 fprintf(fid, "bottom_image_ratio: %.12g\n", result.bottomScore);
 fprintf(fid, "camera_side_ratio: %.12g\n", result.cameraSideRatio);
+fprintf(fid, "below_plane_ratio: %.12g\n", result.belowPlaneRatio);
+fprintf(fid, "below_plane_depth_score: %.12g\n", result.belowPlaneDepthScore);
 fprintf(fid, "height_consistency: %.12g\n", result.heightConsistency);
 fprintf(fid, "spatial_coverage: %.12g\n", result.coverage);
 fprintf(fid, "median_camera_plane_height_slam: %.12g\n", result.medianHeightSlam);

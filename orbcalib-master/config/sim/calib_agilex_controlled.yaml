@@ -5,14 +5,14 @@ Mode: slam
 
 # Set this to 1 when the container has DISPLAY/X11 access and you want to watch
 # ORB-SLAM's Pangolin viewer while the PNG frames are streamed.
-UseViewer: 1
+UseViewer: 0
 
 PlaybackAck.Enabled: 1
 PlaybackAck.TopicPrefix: "/orbcalib"
 PlaybackAck.LogEvery: 100
 
 Camera1.Type: 0
-Camera1.Image: "/cam_front/image"
+Camera1.Image: "/cam_back/image"
 
 Camera2.Type: 0
-Camera2.Image: "/cam_back/image"
+Camera2.Image: "/cam_front/image"

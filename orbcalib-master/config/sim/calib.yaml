@@ -1,16 +1,27 @@
 %YAML:1.0
 
 # slam or calib
-Mode: calib
+Mode: slam
 
 # 0 for mono
 # 1 for stero
 # 2 for rgbd
-Camera1.Type: 2
+Camera1.Type: 0
 Camera1.Image: "/cam_front/image"
 Camera1.Depth: "/cam_front/depth_image"
 
 
-Camera2.Type: 2
+Camera2.Type: 0
 Camera2.Image: "/cam_back/image"
 Camera2.Depth: "/cam_back/depth_image"
+
+#--------------------------------------------------------------------------------------------
+# Optional global map scale for monocular calibration.
+# Estimate one metric scale per map from MATLAB ground-plane tools, then run
+# calibration on globally scaled copies of points/pose translations without
+# modifying the saved atlases.
+#--------------------------------------------------------------------------------------------
+Calibration.UseGlobalMapScales: 0
+Calibration.Camera1GlobalScale: 0.28996428
+Calibration.Camera2GlobalScale: 3.9897576
+Calibration.FixScaleAfterGlobalScaling: 0

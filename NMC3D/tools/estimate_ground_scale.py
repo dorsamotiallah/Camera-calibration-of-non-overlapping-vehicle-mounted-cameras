@@ -71,6 +71,17 @@ class KeyframeScaleEstimate:
     reason: str
 
 
+@dataclass
+class RobustScaleSummary:
+    scale: float
+    mad: float
+    num_used: int
+    num_total: int
+    lower: float
+    upper: float
+    source: str
+
+
 def infer_sequence_and_prefix(atlas: Path, sequence: str | None) -> tuple[str, str]:
     name = atlas.name
     if not name.endswith(".osa"):
@@ -721,6 +732,58 @@ def estimate_keyframe_scale_curve(csv_path: Path, args: argparse.Namespace) -> l
     return smooth_keyframe_scales(raw_rows, args.camera_height, args)
 
 
+def robust_keyframe_scale_summary(estimates: list[KeyframeScaleEstimate], args: argparse.Namespace) -> RobustScaleSummary | None:
+    accepted = np.array([e.raw_scale for e in estimates if e.accepted and np.isfinite(e.raw_scale)], dtype=float)
+    source = "accepted_raw_scale"
+    values = accepted
+
+    if len(values) < args.robust_min_cluster_size:
+        fallback = np.array([e.raw_scale for e in estimates if np.isfinite(e.raw_scale)], dtype=float)
+        values = fallback
+        source = "all_raw_scale_fallback"
+
+    values = values[np.isfinite(values) & (values > 0.0)]
+    if len(values) == 0:
+        return None
+
+    log_values = np.log(values)
+    center = float(np.median(log_values))
+    log_mad = float(np.median(np.abs(log_values - center)))
+    sigma = max(1.4826 * log_mad, 1e-9)
+    max_sigma = max(args.robust_cluster_sigma, 1e-9)
+
+    mask = np.abs(log_values - center) <= max_sigma * sigma
+    if int(np.count_nonzero(mask)) < args.robust_min_cluster_size and source == "accepted_raw_scale":
+        # The accepted set is too fragmented. Fall back to all finite local
+        # estimates, but still cluster in log-scale so outliers cannot dominate.
+        values = np.array([e.raw_scale for e in estimates if np.isfinite(e.raw_scale) and e.raw_scale > 0.0], dtype=float)
+        source = "all_raw_scale_fallback"
+        log_values = np.log(values)
+        center = float(np.median(log_values))
+        log_mad = float(np.median(np.abs(log_values - center)))
+        sigma = max(1.4826 * log_mad, 1e-9)
+        mask = np.abs(log_values - center) <= max_sigma * sigma
+
+    clustered = values[mask]
+    if len(clustered) == 0:
+        clustered = values
+        mask = np.ones_like(values, dtype=bool)
+
+    scale = float(np.median(clustered))
+    mad = float(np.median(np.abs(clustered - scale)))
+    lower = float(np.min(clustered))
+    upper = float(np.max(clustered))
+    return RobustScaleSummary(
+        scale=scale,
+        mad=mad,
+        num_used=int(len(clustered)),
+        num_total=int(len(values)),
+        lower=lower,
+        upper=upper,
+        source=source,
+    )
+
+
 def print_keyframe_scale_summary(estimates: list[KeyframeScaleEstimate], args: argparse.Namespace) -> None:
     accepted = [e for e in estimates if e.accepted and np.isfinite(e.raw_scale)]
     print("\nPer-keyframe scale estimate")
@@ -740,6 +803,14 @@ def print_keyframe_scale_summary(estimates: list[KeyframeScaleEstimate], args: a
     print(f"  smoothed median scale: {np.median(smooth):.8g} m / SLAM unit")
     print(f"  median camera-plane height: {np.median(heights):.8g} SLAM units")
     print(f"  real camera height: {args.camera_height:.8g} m")
+    robust = robust_keyframe_scale_summary(estimates, args)
+    if robust is not None:
+        print("  robust cluster scale for global map scaling")
+        print(f"    source: {robust.source}")
+        print(f"    used: {robust.num_used} / {robust.num_total}")
+        print(f"    scale: {robust.scale:.8g} m / SLAM unit")
+        print(f"    MAD: {robust.mad:.8g}")
+        print(f"    range: [{robust.lower:.8g}, {robust.upper:.8g}]")
     print("  last accepted estimates")
     for e in accepted[-5:]:
         print(
@@ -751,7 +822,7 @@ def print_keyframe_scale_summary(estimates: list[KeyframeScaleEstimate], args: a
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--atlas", required=True, help="Path to a saved .osa atlas.")
-    parser.add_argument("--camera-height", required=True, type=float, help="Real camera optical-center height above ground, in meters.")
+    parser.add_argument("--camera-height", type=float, help="Real camera optical-center height above ground, in meters.")
     parser.add_argument("--settings", help="Camera settings YAML. Inferred for c1/c4 FinnForest atlases when omitted.")
     parser.add_argument("--sequence", help='Atlas sequence suffix, e.g. "Camera 1". Inferred from filenames like c1_atlasCamera 1.osa.')
     parser.add_argument("--vocabulary", default=str(DEFAULT_VOCABULARY), help="ORB vocabulary path.")
@@ -764,6 +835,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--coverage-grid", type=int, default=8)
     parser.add_argument("--seed", type=int, default=4)
     parser.add_argument("--keep-export", help="Optional path to keep the intermediate observation CSV.")
+    parser.add_argument("--export-only", action="store_true", help="Only export atlas observations CSV for MATLAB; do not estimate scale.")
     parser.add_argument("--viz-dir", help="Optional directory for PLY visualization of selected plane/inliers.")
     parser.add_argument("--viz-candidates", action="store_true", help="When --viz-dir is set, export all kept plane candidates, not only the best one.")
     parser.add_argument("--per-keyframe", action="store_true", help="Also estimate a paper-style per-keyframe scale curve.")
@@ -774,11 +846,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--smoothing-window", type=int, default=5, help="Moving average window for accepted per-keyframe scales.")
     parser.add_argument("--scale-low-change", type=float, default=0.10, help="Relative scale change treated as stable.")
     parser.add_argument("--scale-high-change", type=float, default=0.50, help="Relative scale change rejected as a jump.")
+    parser.add_argument("--robust-cluster-sigma", type=float, default=2.5, help="Log-scale MAD gate for the robust per-keyframe global scale.")
+    parser.add_argument("--robust-min-cluster-size", type=int, default=5, help="Minimum cluster size for the robust per-keyframe global scale.")
+    parser.add_argument("--scale-summary-output", help="Optional CSV path for the selected global scale summaries.")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    if args.export_only and not args.keep_export:
+        raise SystemExit("--export-only requires --keep-export because the temporary CSV is deleted after the tool exits.")
+    if not args.export_only and args.camera_height is None:
+        raise SystemExit("--camera-height is required unless --export-only is used.")
+
     atlas = Path(args.atlas).resolve()
     sequence, prefix = infer_sequence_and_prefix(atlas, args.sequence)
 
@@ -789,6 +869,11 @@ def main() -> int:
             keep_path = Path(args.keep_export).resolve()
             keep_path.parent.mkdir(parents=True, exist_ok=True)
             keep_path.write_text(csv_path.read_text())
+            print(f"Atlas observations CSV written to: {keep_path}")
+
+        if args.export_only:
+            print("Export-only mode: skipped Python ground-scale and per-keyframe scale estimation.")
+            return 0
 
         mp_ids, points, bottom_by_mp, camera_dict = load_observations(csv_path)
         cameras = np.vstack(list(camera_dict.values()))
@@ -849,6 +934,36 @@ def main() -> int:
                 out_path = Path(args.per_keyframe_output).resolve()
                 write_keyframe_scale_csv(out_path, estimates)
                 print(f"  per-keyframe CSV: {out_path}")
+
+            if args.scale_summary_output:
+                robust = robust_keyframe_scale_summary(estimates, args)
+                summary_path = Path(args.scale_summary_output).resolve()
+                summary_path.parent.mkdir(parents=True, exist_ok=True)
+                with summary_path.open("w", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["method", "scale", "mad", "num_used", "num_total", "range_low", "range_high", "source"])
+                    writer.writerow([
+                        "global_plane",
+                        f"{scale:.9g}",
+                        f"{best.mad_height_slam * scale / max(best.median_height_slam, 1e-12):.9g}",
+                        best.num_inliers,
+                        len(points),
+                        "",
+                        "",
+                        "best_global_plane",
+                    ])
+                    if robust is not None:
+                        writer.writerow([
+                            "robust_keyframe_cluster",
+                            f"{robust.scale:.9g}",
+                            f"{robust.mad:.9g}",
+                            robust.num_used,
+                            robust.num_total,
+                            f"{robust.lower:.9g}",
+                            f"{robust.upper:.9g}",
+                            robust.source,
+                        ])
+                print(f"  scale summary CSV: {summary_path}")
 
     return 0
 

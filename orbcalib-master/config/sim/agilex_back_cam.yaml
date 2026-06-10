@@ -1,26 +1,23 @@
 %YAML:1.0
 
 # Physical Agilex back camera.
-# TODO: Replace the intrinsic/distortion values with the real calibration for
-# this camera. The current values are only a 1920x1080 placeholder scaled from
-# the old 640x480 Gazebo config, so they are not a real calibration.
+# Fisheye calibration using the ORB-SLAM3 Kannala-Brandt camera model.
 
 # System.LoadAtlasFromFile: "back_atlas"
-# System.SaveAtlasToFile: "back_atlas"
+System.SaveAtlasToFile: "Agilex_back_atlas"
 
 File.version: "1.0"
-Camera.type: "PinHole"
+Camera.type: "KannalaBrandt8"
 
-Camera1.fx: 1565.7997668156135
-Camera1.fy: 1174.3498251117101
-Camera1.cx: 960.0
-Camera1.cy: 540.0
+Camera1.fx: 636.5631413774819
+Camera1.fy: 636.5382472881706
+Camera1.cx: 898.4972609147454
+Camera1.cy: 535.5413581642772
 
-Camera1.k1: 0.0
-Camera1.k2: 0.0
-Camera1.p1: 0.0
-Camera1.p2: 0.0
-Camera1.k3: 0.0
+Camera1.k1: -0.01171880068744964
+Camera1.k2: 0.001425521689779601
+Camera1.k3: -0.001944367740309391
+Camera1.k4: 0.0001398265963667359
 
 Camera.width: 1920
 Camera.height: 1080
@@ -28,13 +25,14 @@ Camera.fps: 10
 Camera.RGB: 1
 Camera.bf: 32.0
 
-ORBextractor.nFeatures: 5000
-ORBextractor.scaleFactor: 1.15
-ORBextractor.nLevels: 10
-ORBextractor.iniThFAST: 10
-ORBextractor.minThFAST: 3
+ORBextractor.nFeatures: 8000
+ORBextractor.scaleFactor: 1.12
+ORBextractor.nLevels: 12
+ORBextractor.iniThFAST: 7
+ORBextractor.minThFAST: 2
 
 Viewer.KeyFrameSize: 0.05
+Viewer.imageViewScale: 0.4
 Viewer.KeyFrameLineWidth: 1.0
 Viewer.GraphLineWidth: 0.9
 Viewer.PointSize: 2.0

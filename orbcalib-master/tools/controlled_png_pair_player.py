@@ -68,10 +68,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout-sec", type=float, default=120.0)
     parser.add_argument("--start-index", type=int, default=1, help="1-based inclusive pair index.")
     parser.add_argument("--max-pairs", type=int, default=0, help="0 means all pairs.")
+    parser.add_argument("--stop-camera1-stamp", type=int, default=0, help="Stop after publishing the pair with camera 1 timestamp <= this value.")
+    parser.add_argument("--stop-camera2-stamp", type=int, default=0, help="Stop after publishing the pair with camera 2 timestamp <= this value.")
     parser.add_argument("--wait-for-subscribers", action="store_true")
     parser.add_argument("--subscriber-timeout-sec", type=float, default=60.0)
     parser.add_argument("--queue-size", type=int, default=10)
     parser.add_argument("--log-every", type=int, default=100)
+    parser.add_argument("--skip-bad-images", action="store_true", help="Skip pairs whose PNGs cannot be decoded.")
     return parser.parse_args()
 
 
@@ -231,6 +234,13 @@ def should_publish_pair(pair_index: int, start_index: int, max_pairs: int) -> bo
     return max_pairs <= 0 or pair_index < start_index + max_pairs
 
 
+def is_after_stop_stamp(pair: PngPair, stop_camera1_stamp: int, stop_camera2_stamp: int) -> bool:
+    return (
+        (stop_camera1_stamp > 0 and pair.frame1.stamp_ns > stop_camera1_stamp)
+        or (stop_camera2_stamp > 0 and pair.frame2.stamp_ns > stop_camera2_stamp)
+    )
+
+
 def read_png(path: Path, encoding: str):
     flag = cv2.IMREAD_GRAYSCALE if encoding == "mono8" else cv2.IMREAD_COLOR
     image = cv2.imread(str(path), flag)
@@ -279,6 +289,10 @@ def main() -> None:
     log(f"Camera 2 dir: {Path(args.camera2_dir).expanduser().resolve()}")
     log(f"Selected frame pairs: {len(pairs)}")
     log(f"Publishing topics: {args.topic1} and {args.topic2}")
+    if args.stop_camera1_stamp > 0:
+        log(f"Stopping after camera 1 reaches {args.stop_camera1_stamp}.png")
+    if args.stop_camera2_stamp > 0:
+        log(f"Stopping after camera 2 reaches {args.stop_camera2_stamp}.png")
 
     tracker = AckTracker()
     rospy.Subscriber(args.ack1, Header, tracker.ack1, queue_size=100)
@@ -306,19 +320,29 @@ def main() -> None:
             if args.max_pairs > 0 and pair.index >= args.start_index + args.max_pairs:
                 break
             continue
+        if is_after_stop_stamp(pair, args.stop_camera1_stamp, args.stop_camera2_stamp):
+            log(f"Reached stop timestamp before source pair index {pair.index}; ending playback.")
+            break
 
         if args.playback_rate > 0.0:
             target_elapsed = (pair.stamp_ns - first_stamp_ns) / 1e9 / args.playback_rate
             while time.monotonic() < wall_start + target_elapsed and not rospy.is_shutdown():
                 time.sleep(0.005)
 
+        try:
+            image1 = read_png(pair.frame1.path, args.encoding)
+            image2 = read_png(pair.frame2.path, args.encoding)
+        except RuntimeError as exc:
+            if not args.skip_bad_images:
+                raise
+            log(f"Skipping source pair index {pair.index}: {exc}")
+            continue
+
         tracker.wait_for_capacity(args.max_in_flight, args.timeout_sec)
         stamp1 = ros_base + rospy.Duration.from_sec((pair.frame1.stamp_ns - first_stamp_ns) / 1e9)
         stamp2 = ros_base + rospy.Duration.from_sec((pair.frame2.stamp_ns - first_stamp_ns) / 1e9)
         tracker.add_pending(stamp1, stamp2)
 
-        image1 = read_png(pair.frame1.path, args.encoding)
-        image2 = read_png(pair.frame2.path, args.encoding)
         pub1.publish(make_ros_image(image1, stamp1, args.frame_id1, args.encoding))
         pub2.publish(make_ros_image(image2, stamp2, args.frame_id2, args.encoding))
         published += 1

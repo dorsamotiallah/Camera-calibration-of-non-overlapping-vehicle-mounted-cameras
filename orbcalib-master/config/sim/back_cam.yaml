@@ -1,14 +1,14 @@
 %YAML:1.0
 
 # If the LoadFile doesn't exist, the system gives a message and creates a new Atlas from scratch
-# System.LoadAtlasFromFile: "back_mono_atlas"
+System.LoadAtlasFromFile: "back_mono_atlas"
 # System.LoadAtlasFromFile: "back_mono_2_atlas"
-System.LoadAtlasFromFile: "back_RGBD_atlas"
+# System.LoadAtlasFromFile: "back_RGBD_atlas"
 
 # The store file is created from the current session. If a file with the same name exists it is deleted
 # System.SaveAtlasToFile: "back_mono_atlas"
 # System.SaveAtlasToFile: "back_mono_2_atlas"
-System.SaveAtlasToFile: "ba7ck_RGBD_atlas"
+# System.SaveAtlasToFile: "ba7ck_RGBD_atlas"
 
 #--------------------------------------------------------------------------------------------
 # Camera Parameters
@@ -51,7 +51,7 @@ RGBD.DepthMapFactor: 1.0
 #--------------------------------------------------------------------------------------------
 # ORB Parameters
 #--------------------------------------------------------------------------------------------
-ORBextractor.nFeatures: 5000
+ORBextractor.nFeatures: 6000
 ORBextractor.scaleFactor: 1.15
 ORBextractor.nLevels: 10
 ORBextractor.iniThFAST: 10

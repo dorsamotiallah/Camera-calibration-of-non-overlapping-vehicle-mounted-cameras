@@ -2,13 +2,18 @@
 #include "calib.hpp"
 #include "edge.hpp"
 
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+
 using std::cout;
 using std::endl;
 using namespace ORB_SLAM3;
 
 const float todeg = 180 / M_PI;
 
-CalibC2C::CalibC2C(System* src, System* dst)
+CalibC2C::CalibC2C(System* src, System* dst, const MapScaleConfig& scaleConfig)
+    : mScaleConfig(scaleConfig)
 {
     // get Atlas
     SubSystem* ssrc = static_cast<SubSystem*>(src);
@@ -28,6 +33,13 @@ CalibC2C::CalibC2C(System* src, System* dst)
 
     mpLC = new SubLoopClosing();
 
+    if(mScaleConfig.useGlobalMapScales)
+    {
+        cout << "global map scale calibration enabled" << endl;
+        cout << "  camera1 global scale: " << mScaleConfig.camera1GlobalScale << " m / SLAM unit" << endl;
+        cout << "  camera2 global scale: " << mScaleConfig.camera2GlobalScale << " m / SLAM unit" << endl;
+        cout << "  fix Sim3 scale after global scaling: " << (mScaleConfig.fixScaleAfterGlobalScaling ? "yes" : "no") << endl;
+    }
 }
 
 vector<KeyFrame*> CalibC2C::DetectNBestCandidates(KeyFrame* pKF, int N)
@@ -313,7 +325,8 @@ bool CalibC2C::DetectCommonRegionsFromCand(KeyFrame* pKF, vector<KeyFrame*>& vpC
 // vvMPs is expressed at frame of Cand
 // finalPose1 is camera1's final pose expressed at start frame
 int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vector<KeyFrame*>& vpKF2s, vector<vector<MapPoint*>>& vvpMatches,
-    g2o::Sim3 &g2oS12, const float th2, const bool bFixScale, Eigen::Isometry3f finalPose1, Eigen::Isometry3f finalPose2)
+    g2o::Sim3 &g2oS12, const float th2, const bool bFixScale, Eigen::Isometry3f finalPose1, Eigen::Isometry3f finalPose2,
+    const string& debugInliersCsvPath)
 {
     // 1. init g2o optimizer
     g2o::SparseOptimizer optimizer;
@@ -330,8 +343,11 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
     KeyFrame* KF2 = vpKF2s.front();
 
     // 2. set vertex of extrinsic
+    const bool effectiveFixScale =
+        bFixScale ||
+        (mScaleConfig.useGlobalMapScales && mScaleConfig.fixScaleAfterGlobalScaling);
     g2o::VertexSim3Expmap *vSim3 = new g2o::VertexSim3Expmap();
-    vSim3->_fix_scale = bFixScale;
+    vSim3->_fix_scale = effectiveFixScale;
     vSim3->setFixed(false);                          
     vSim3->_principle_point1[0] = KF1->cx;
     vSim3->_principle_point1[1] = KF1->cy;
@@ -352,6 +368,16 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
     int id2 = 0;
     vector<vector<g2o::EdgeSim3ProjectXYZForCalibr*>> vvpEdges12(nKF);
     vector<vector<g2o::EdgeInverseSim3ProjectXYZForCalibr*>> vvpEdges21(nKF);
+    struct DebugRecord
+    {
+        unsigned long kf1Id;
+        unsigned long kf2Id;
+        unsigned long mp1Id;
+        unsigned long mp2Id;
+        Eigen::Vector3d p1;
+        Eigen::Vector3d p2;
+    };
+    vector<vector<DebugRecord>> vvpDebugRecords(nKF);
 
     for(int idx=0; idx<nKF; idx++)
     {
@@ -363,8 +389,10 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
         int N = vpMatches.size();
         vector<g2o::EdgeSim3ProjectXYZForCalibr*> vpEdges12;       
         vector<g2o::EdgeInverseSim3ProjectXYZForCalibr*> vpEdges21;
+        vector<DebugRecord> vpDebugRecords;
         vpEdges12.reserve(N);
         vpEdges21.reserve(N);
+        vpDebugRecords.reserve(N);
 
         Eigen::Matrix3d R1w, R2w;
         Eigen::Vector3d t1w, t2w;
@@ -375,6 +403,14 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
         R2w = P2w.rotation().cast<double>();
         t1w = P1w.translation().cast<double>();
         t2w = P2w.translation().cast<double>();
+
+        const double scale1 = mScaleConfig.useGlobalMapScales ? mScaleConfig.camera1GlobalScale : 1.0;
+        const double scale2 = mScaleConfig.useGlobalMapScales ? mScaleConfig.camera2GlobalScale : 1.0;
+        if(mScaleConfig.useGlobalMapScales)
+        {
+            t1w *= scale1;
+            t2w *= scale2;
+        }
 
         for(int i=0; i<N; i++){
             if(!vpMatches[i])   continue;
@@ -395,6 +431,8 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
             Eigen::Vector3f P3D1w = pMP1->GetWorldPos();
             // trans to final if need
             P3D1w = finalPose1.inverse() * P3D1w;
+            if(mScaleConfig.useGlobalMapScales)
+                P3D1w *= static_cast<float>(scale1);
             vPoint1->setEstimate(P3D1w.cast<double>());
             vPoint1->setId(id1);
             vPoint1->setFixed(true);
@@ -404,6 +442,8 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
             g2o::VertexSBAPointXYZ *vPoint2 = new g2o::VertexSBAPointXYZ();
             Eigen::Vector3f P3D2w = pMP2->GetWorldPos();
             P3D2w = finalPose2.inverse() * P3D2w;
+            if(mScaleConfig.useGlobalMapScales)
+                P3D2w *= static_cast<float>(scale2);
             vPoint2->setEstimate(P3D2w.cast<double>());
             vPoint2->setId(id2);
             vPoint2->setFixed(true);
@@ -446,16 +486,55 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
 
             vpEdges12.push_back(e12);
             vpEdges21.push_back(e21);
+            vpDebugRecords.push_back({
+                pKF1->mnId,
+                pKF2->mnId,
+                pMP1->mnId,
+                pMP2->mnId,
+                P3D1w.cast<double>(),
+                P3D2w.cast<double>()});
         }
 
         vvpEdges12[idx] = vpEdges12;
         vvpEdges21[idx] = vpEdges21;
+        vvpDebugRecords[idx] = vpDebugRecords;
+    }
+
+    if(mScaleConfig.useGlobalMapScales)
+    {
+        cout << "global map scales applied: correspondences=" << nCorrespondences << endl;
+    }
+
+    if(nCorrespondences == 0)
+    {
+        cout << "WARNING: no correspondences were added to calibration optimizer" << endl;
+        return 0;
     }
 
     // 4. start optimize
     int outliers;
     for(int i=0; i<4; i++)
     {
+        int activeEdgePairs = 0;
+        for(int j=0; j<nKF; j++)
+        {
+            auto& vpEdges12 = vvpEdges12[j];
+            auto& vpEdges21 = vvpEdges21[j];
+            for(int k=0; k<vpEdges12.size(); k++)
+            {
+                auto e12 = vpEdges12[k];
+                auto e21 = vpEdges21[k];
+                if(e12 && e21 && e12->level() == 0 && e21->level() == 0)
+                    activeEdgePairs++;
+            }
+        }
+
+        if(activeEdgePairs == 0)
+        {
+            cout << "WARNING: calibration optimizer has no active edge pairs after outlier rejection" << endl;
+            return 0;
+        }
+
         vSim3->setEstimate(g2oS12);
         optimizer.initializeOptimization(0);
         optimizer.optimize(10);
@@ -485,6 +564,12 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
         }
     }
 
+    if(nCorrespondences - outliers <= 0)
+    {
+        cout << "WARNING: calibration optimizer rejected all correspondences" << endl;
+        return 0;
+    }
+
     // calc reproject error
     double SumChi2 = 0;
     for(int j=0; j<nKF; j++)
@@ -507,6 +592,57 @@ int CalibC2C::OptimizeSim3ForCalibr(const vector<KeyFrame*>& vpKF1s, const vecto
     SumChi2 /= (2 * (nCorrespondences - outliers));
     g2o::VertexSim3Expmap *vSim3_recov = static_cast<g2o::VertexSim3Expmap *>(optimizer.vertex(0));
     g2oS12 = vSim3_recov->estimate();
+
+    if(!debugInliersCsvPath.empty())
+    {
+        std::ofstream csv(debugInliersCsvPath);
+        if(csv.is_open())
+        {
+            csv << "kf1_id,kf2_id,mp1_id,mp2_id,"
+                << "p1_x,p1_y,p1_z,p2_x,p2_y,p2_z,"
+                << "p1_in_w2_x,p1_in_w2_y,p1_in_w2_z,"
+                << "p2_in_w1_x,p2_in_w1_y,p2_in_w1_z,"
+                << "chi2_12,chi2_21\n";
+
+            const g2o::Sim3 g2oS21 = g2oS12.inverse();
+            int written = 0;
+            for(int j=0; j<nKF; j++)
+            {
+                auto& vpEdges12 = vvpEdges12[j];
+                auto& vpEdges21 = vvpEdges21[j];
+                auto& vpDebugRecords = vvpDebugRecords[j];
+
+                for(int k=0; k<vpEdges12.size(); k++)
+                {
+                    auto e12 = vpEdges12[k];
+                    auto e21 = vpEdges21[k];
+                    if(!e12 || !e21 || e12->chi2() > th2 || e21->chi2() > th2)
+                        continue;
+
+                    const DebugRecord& rec = vpDebugRecords[k];
+                    const Eigen::Vector3d p1InW2 = g2oS12.map(rec.p1);
+                    const Eigen::Vector3d p2InW1 = g2oS21.map(rec.p2);
+
+                    csv << rec.kf1Id << "," << rec.kf2Id << ","
+                        << rec.mp1Id << "," << rec.mp2Id << ","
+                        << rec.p1.x() << "," << rec.p1.y() << "," << rec.p1.z() << ","
+                        << rec.p2.x() << "," << rec.p2.y() << "," << rec.p2.z() << ","
+                        << p1InW2.x() << "," << p1InW2.y() << "," << p1InW2.z() << ","
+                        << p2InW1.x() << "," << p2InW1.y() << "," << p2InW1.z() << ","
+                        << e12->chi2() << "," << e21->chi2() << "\n";
+                    written++;
+                }
+            }
+            cout << "wrote calibration inliers: " << debugInliersCsvPath
+                 << " rows=" << written << endl;
+        }
+        else
+        {
+            cout << "WARNING: could not write calibration inlier CSV: "
+                 << debugInliersCsvPath << endl;
+        }
+    }
+
     return nCorrespondences - outliers;
 }
 
@@ -521,6 +657,23 @@ void printResult(const g2o::Sim3& pose, const string& header)
     Eigen::Vector3d t = pose.translation();
     for(int i=0; i<3; i++)  cout << t(i) << " ";
     cout << endl;
+}
+
+g2o::Sim3 ConvertRawSim3ToScaledMaps(const g2o::Sim3& rawS12, const MapScaleConfig& scaleConfig)
+{
+    if(!scaleConfig.useGlobalMapScales)
+        return rawS12;
+
+    const double scale1 = scaleConfig.camera1GlobalScale;
+    const double scale2 = scaleConfig.camera2GlobalScale;
+
+    // raw:    X2_raw = s * R * X1_raw + t
+    // scaled: X1_m = scale1 * X1_raw, X2_m = scale2 * X2_raw
+    // hence:  X2_m = (scale2 / scale1) * s * R * X1_m + scale2 * t
+    return g2o::Sim3(
+        rawS12.rotation(),
+        rawS12.translation() * scale2,
+        rawS12.scale() * scale2 / scale1);
 }
 
 void CalibC2C::RunCalib()
@@ -575,20 +728,25 @@ void CalibC2C::RunCalib()
         return;
     }
     
-    g2o::Sim3 firstPose = g2oS12;
+    g2o::Sim3 firstPose = ConvertRawSim3ToScaledMaps(g2oS12, mScaleConfig);
+    if(mScaleConfig.useGlobalMapScales)
+        printResult(firstPose, "---- scaled-map initial pose ----");
+
     // global optimization at first place
     cout << "matched kfs involve in optim size: " << rsrc.size() << endl;
-    int inliers = OptimizeSim3ForCalibr(rsrc, rdst, mmps, firstPose, 10, bFixScale);
+    int inliers = OptimizeSim3ForCalibr(rsrc, rdst, mmps, firstPose, 10, bFixScale,
+        Eigen::Isometry3f::Identity(), Eigen::Isometry3f::Identity(), "calib_inliers_first.csv");
     cout << "inliers size: " << inliers << endl;
     printResult(firstPose, "---- first pose optim ----");
     
     // global optimization at final place
-    g2o::Sim3 finalPose = g2oS12;
+    g2o::Sim3 finalPose = ConvertRawSim3ToScaledMaps(g2oS12, mScaleConfig);
     Eigen::Isometry3f finalPose1, finalPose2;
     // Twc camera expressed at world frame
     finalPose1.matrix() = srcKFs.back()->GetPoseInverse().matrix();
     finalPose2.matrix() = dstKFs.back()->GetPoseInverse().matrix();
-    inliers = OptimizeSim3ForCalibr(rsrc, rdst, mmps, finalPose, 10, bFixScale, finalPose1, finalPose2);
+    inliers = OptimizeSim3ForCalibr(rsrc, rdst, mmps, finalPose, 10, bFixScale, finalPose1, finalPose2,
+        "calib_inliers_final.csv");
     cout << "inliers size: " << inliers << endl;
     printResult(finalPose, "---- final pose optim ----");
 

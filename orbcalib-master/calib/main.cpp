@@ -195,6 +195,20 @@ int main(int argc, char **argv)
     if(!ackLogEveryNode.empty())
         ackLogEvery = (int)ackLogEveryNode;
 
+    MapScaleConfig mapScaleConfig;
+    cv::FileNode useGlobalMapScalesNode = fsSettings["Calibration.UseGlobalMapScales"];
+    if(!useGlobalMapScalesNode.empty())
+        mapScaleConfig.useGlobalMapScales = ((int)useGlobalMapScalesNode) != 0;
+    cv::FileNode camera1GlobalScaleNode = fsSettings["Calibration.Camera1GlobalScale"];
+    if(!camera1GlobalScaleNode.empty())
+        mapScaleConfig.camera1GlobalScale = (double)camera1GlobalScaleNode;
+    cv::FileNode camera2GlobalScaleNode = fsSettings["Calibration.Camera2GlobalScale"];
+    if(!camera2GlobalScaleNode.empty())
+        mapScaleConfig.camera2GlobalScale = (double)camera2GlobalScaleNode;
+    cv::FileNode fixScaleAfterGlobalScalingNode = fsSettings["Calibration.FixScaleAfterGlobalScaling"];
+    if(!fixScaleAfterGlobalScalingNode.empty())
+        mapScaleConfig.fixScaleAfterGlobalScaling = ((int)fixScaleAfterGlobalScalingNode) != 0;
+
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     ORB_SLAM3::System SLAM1(argv[1], argv[3], static_cast<ORB_SLAM3::System::eSensor>(camera1type), use_viewer, 0, "Camera 1");
     ORB_SLAM3::System SLAM2(argv[1], argv[4], static_cast<ORB_SLAM3::System::eSensor>(camera2type), use_viewer, 0, "Camera 2");
@@ -202,7 +216,7 @@ int main(int argc, char **argv)
     if(mode == "calib"){
         cout << "atlas are loaded!!" << endl;
         cout << "start to calib..." << endl;
-        CalibC2C c2c(&SLAM1, &SLAM2);
+        CalibC2C c2c(&SLAM1, &SLAM2, mapScaleConfig);
         c2c.RunCalib();        
         cout << "calib finish, exit" << endl;
         return 0;
