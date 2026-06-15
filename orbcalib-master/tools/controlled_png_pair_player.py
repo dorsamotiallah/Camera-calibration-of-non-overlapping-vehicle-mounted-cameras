@@ -75,6 +75,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--queue-size", type=int, default=10)
     parser.add_argument("--log-every", type=int, default=100)
     parser.add_argument("--skip-bad-images", action="store_true", help="Skip pairs whose PNGs cannot be decoded.")
+    parser.add_argument("--frame-map-csv", type=Path, help="Write PNG path to published ROS timestamp mapping CSV.")
     return parser.parse_args()
 
 
@@ -294,6 +295,18 @@ def main() -> None:
     if args.stop_camera2_stamp > 0:
         log(f"Stopping after camera 2 reaches {args.stop_camera2_stamp}.png")
 
+    frame_map = None
+    if args.frame_map_csv:
+        args.frame_map_csv.parent.mkdir(parents=True, exist_ok=True)
+        frame_map = args.frame_map_csv.open("w", newline="")
+        frame_map.write(
+            "published_index,source_pair_index,"
+            "camera1_png,camera2_png,"
+            "camera1_source_stamp_ns,camera2_source_stamp_ns,pair_source_stamp_ns,"
+            "camera1_ros_stamp,camera2_ros_stamp,"
+            "camera1_ros_stamp_ns,camera2_ros_stamp_ns\n"
+        )
+
     tracker = AckTracker()
     rospy.Subscriber(args.ack1, Header, tracker.ack1, queue_size=100)
     rospy.Subscriber(args.ack2, Header, tracker.ack2, queue_size=100)
@@ -347,6 +360,16 @@ def main() -> None:
         pub2.publish(make_ros_image(image2, stamp2, args.frame_id2, args.encoding))
         published += 1
 
+        if frame_map:
+            frame_map.write(
+                f"{published},{pair.index},"
+                f'"{pair.frame1.path}","{pair.frame2.path}",'
+                f"{pair.frame1.stamp_ns},{pair.frame2.stamp_ns},{pair.stamp_ns},"
+                f"{stamp1.to_sec():.9f},{stamp2.to_sec():.9f},"
+                f"{stamp1.to_nsec()},{stamp2.to_nsec()}\n"
+            )
+            frame_map.flush()
+
         if published == 1 or published % log_every == 0:
             elapsed = max(time.monotonic() - started, 1e-6)
             log(
@@ -360,6 +383,8 @@ def main() -> None:
     log("All selected pairs published. Waiting for final ACKs...")
     tracker.wait_for_all(args.timeout_sec)
     log("All selected frame pairs were ACKed by orbcalib.")
+    if frame_map:
+        frame_map.close()
 
 
 if __name__ == "__main__":

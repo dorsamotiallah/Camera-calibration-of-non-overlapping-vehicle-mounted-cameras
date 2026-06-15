@@ -276,6 +276,7 @@ use_viewer=${USE_VIEWER:-from_config}
 viewer_warmup_sec=$VIEWER_WARMUP_SEC
 pause_before_playback=$PAUSE_BEFORE_PLAYBACK
 skip_bad_images=$SKIP_BAD_IMAGES
+frame_pairs_csv=$RUN_REL/frame_pairs.csv
 started_at=$(date -Iseconds)
 repo_dir=$REPO_DIR
 calib_bin=$CALIB_BIN
@@ -350,6 +351,7 @@ python3 "$REPO_DIR/tools/controlled_png_pair_player.py" \
   --stop-camera1-stamp "$STOP_CAMERA1_STAMP" \
   --stop-camera2-stamp "$STOP_CAMERA2_STAMP" \
   --encoding "$ENCODING" \
+  --frame-map-csv "$RUN_DIR/frame_pairs.csv" \
   $([[ "$SKIP_BAD_IMAGES" == "1" ]] && printf '%s' "--skip-bad-images") \
   --wait-for-subscribers \
   2>&1 | tee "$RUN_DIR/player.log"

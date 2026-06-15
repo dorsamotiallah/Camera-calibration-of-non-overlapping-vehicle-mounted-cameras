@@ -33,6 +33,7 @@ docker run --rm -it \
   --volume "$HOME/Desktop/Dorsa/orbcalib-master":/ws/src/orbcalib-master \
   --volume "$HOME/Desktop/Dorsa/NMC3D":/ws/src/NMC3D \
   --volume "$HOME/Desktop/Dorsa/Agilex Recordings":/ws/src/Agilex_Recordings \
+  --volume "/media/civit/T7":/ws/src/T7 \
   --device /dev/dri:/dev/dri \
   orbcalib-noetic bash
 ```
@@ -272,3 +273,41 @@ The safest default is:
 
 That publishes one synchronized frame pair, waits until both ORB-SLAM tracking
 calls return, then publishes the next pair.
+
+## 8. Batch Defish Saved Frames
+
+To defish all PNG/JPG frames under a dataset root with `front`, `back`, `left`,
+and `right` subfolders:
+
+```bash
+cd ~/Desktop/Dorsa
+
+python3 orbcalib-master/tools/batch_defish_agilex_frames.py \
+  "Agilex Recordings/Agilext 8.6.2026/tinyLoop" \
+  --fov-deg 120
+```
+
+By default this reads the per-camera intrinsics from
+`orbcalib-master/config/sim/agilex_<camera>_cam.yaml` and writes beside the
+input dataset as:
+
+```text
+Agilex Recordings/Agilext 8.6.2026/tinyLoop_defished/
+  front/
+  back/
+  left/
+  right/
+```
+
+Useful options:
+
+```text
+--fov-deg 100                         preserve a narrower output view
+--fov-axis horizontal|vertical|diagonal
+--output-root /path/to/output
+--output-size 1920x1080
+--cameras front back
+--calib front=/path/to/front.yaml     override one camera calibration
+--overwrite
+--dry-run --limit 5
+```

@@ -4,13 +4,137 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include <fstream>
+#include <iomanip>
 
 using std::cout;
 using std::endl;
 using namespace ORB_SLAM3;
 
 const float todeg = 180 / M_PI;
+
+static string KeyframeMatchDebugCsvPath()
+{
+    const char* path = std::getenv("CALIB_KEYFRAME_MATCHES_CSV");
+    if(path && path[0] != '\0')
+        return string(path);
+    return "calib_keyframe_matches.csv";
+}
+
+static string CsvEscape(const string& value)
+{
+    string escaped = "\"";
+    for(char c : value)
+    {
+        if(c == '"')
+            escaped += "\"\"";
+        else
+            escaped += c;
+    }
+    escaped += "\"";
+    return escaped;
+}
+
+static void InitKeyframeMatchDebugCsv(const string& path)
+{
+    std::ofstream csv(path);
+    if(!csv.is_open())
+    {
+        cout << "WARNING: could not write keyframe match debug CSV: " << path << endl;
+        return;
+    }
+
+    csv << "stage,src_kf_id,dst_kf_id,src_frame_id,dst_frame_id,src_timestamp,dst_timestamp,src_frame,dst_frame,"
+        << "src_kp_idx,dst_kp_idx,src_u,src_v,dst_u,dst_v,"
+        << "src_mp_id,dst_mp_id,src_mp_x,src_mp_y,src_mp_z,dst_mp_x,dst_mp_y,dst_mp_z\n";
+}
+
+static bool GetMapPointObservation(MapPoint* mp, KeyFrame* preferredKF, KeyFrame*& observedKF, int& idx)
+{
+    observedKF = nullptr;
+    idx = -1;
+    if(!mp || mp->isBad())
+        return false;
+
+    if(preferredKF && !preferredKF->isBad())
+    {
+        const auto preferredIdx = mp->GetIndexInKeyFrame(preferredKF);
+        const int candidateIdx = get<0>(preferredIdx);
+        if(candidateIdx >= 0 && candidateIdx < preferredKF->mvKeysUn.size())
+        {
+            observedKF = preferredKF;
+            idx = candidateIdx;
+            return true;
+        }
+    }
+
+    const auto observations = mp->GetObservations();
+    for(const auto& observation : observations)
+    {
+        KeyFrame* kf = observation.first;
+        const int candidateIdx = get<0>(observation.second);
+        if(kf && !kf->isBad() && candidateIdx >= 0 && candidateIdx < kf->mvKeysUn.size())
+        {
+            observedKF = kf;
+            idx = candidateIdx;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void AppendKeyframeMatchDebugCsv(const string& path, const string& stage, KeyFrame* srcKF,
+    KeyFrame* fallbackDstKF, const vector<MapPoint*>& matchedMPs, const vector<KeyFrame*>* matchedKFs = nullptr)
+{
+    if(!srcKF || srcKF->isBad())
+        return;
+
+    const vector<MapPoint*>& srcMPs = srcKF->GetMapPointMatches();
+    const size_t n = std::min(srcMPs.size(), matchedMPs.size());
+    std::ofstream csv(path, std::ios::app);
+    if(!csv.is_open())
+    {
+        cout << "WARNING: could not append keyframe match debug CSV: " << path << endl;
+        return;
+    }
+    csv << std::fixed << std::setprecision(9);
+
+    for(size_t i = 0; i < n; ++i)
+    {
+        MapPoint* srcMP = srcMPs[i];
+        MapPoint* dstMP = matchedMPs[i];
+        if(!srcMP || !dstMP || srcMP->isBad() || dstMP->isBad() || i >= srcKF->mvKeysUn.size())
+            continue;
+
+        KeyFrame* preferredDstKF = fallbackDstKF;
+        if(matchedKFs && i < matchedKFs->size() && (*matchedKFs)[i])
+            preferredDstKF = (*matchedKFs)[i];
+
+        KeyFrame* dstKF = nullptr;
+        int dstIdx = -1;
+        if(!GetMapPointObservation(dstMP, preferredDstKF, dstKF, dstIdx))
+            continue;
+
+        const cv::KeyPoint& srcKP = srcKF->mvKeysUn[i];
+        const cv::KeyPoint& dstKP = dstKF->mvKeysUn[dstIdx];
+        const Eigen::Vector3f srcPos = srcMP->GetWorldPos();
+        const Eigen::Vector3f dstPos = dstMP->GetWorldPos();
+
+        csv << stage << ","
+            << srcKF->mnId << "," << dstKF->mnId << ","
+            << srcKF->mnFrameId << "," << dstKF->mnFrameId << ","
+            << srcKF->mTimeStamp << "," << dstKF->mTimeStamp << ","
+            << CsvEscape(srcKF->mNameFile) << "," << CsvEscape(dstKF->mNameFile) << ","
+            << i << "," << dstIdx << ","
+            << srcKP.pt.x << "," << srcKP.pt.y << ","
+            << dstKP.pt.x << "," << dstKP.pt.y << ","
+            << srcMP->mnId << "," << dstMP->mnId << ","
+            << srcPos(0) << "," << srcPos(1) << "," << srcPos(2) << ","
+            << dstPos(0) << "," << dstPos(1) << "," << dstPos(2) << "\n";
+    }
+}
 
 CalibC2C::CalibC2C(System* src, System* dst, const MapScaleConfig& scaleConfig)
     : mScaleConfig(scaleConfig)
@@ -205,6 +329,7 @@ bool CalibC2C::DetectCommonRegionsFromCand(KeyFrame* pKF, vector<KeyFrame*>& vpC
             }
         }
         cout << "search by bow get matched mp size: " << numBoWMatches << endl;
+        AppendKeyframeMatchDebugCsv(KeyframeMatchDebugCsvPath(), "bow", pKF, pMostBoWMatchesKF, vpMatchedPoints, &vpKeyFrameMatchedMP);
 
         // 3. solve sim3
         if(numBoWMatches >= 20){
@@ -257,6 +382,7 @@ bool CalibC2C::DetectCommonRegionsFromCand(KeyFrame* pKF, vector<KeyFrame*>& vpC
 
                 int numProjMatches = matcher->SearchByProjection(pKF, mScw, vpMapPoints, vpKeyFrames, vpMatchedMPs, vpKeyFrameMatchedMP, 8, 1.5);
                 cout << "search by projection get size: " << numProjMatches << endl;
+                AppendKeyframeMatchDebugCsv(KeyframeMatchDebugCsvPath(), "projection_initial", pKF, pMostBoWMatchesKF, vpMatchedMPs, &vpKeyFrameMatchedMP);
 
                 // 5. after use searchByProjection to get more mp, optimize Scm with them
                 if(numProjMatches >= 25)
@@ -264,6 +390,7 @@ bool CalibC2C::DetectCommonRegionsFromCand(KeyFrame* pKF, vector<KeyFrame*>& vpC
                     Eigen::Matrix<double, 7, 7> mHessian7x7;
                     int numOptMatches = Optimizer::OptimizeSim3(pKF, pKFi, vpMatchedMPs, gScm, 10, bFixedScale, mHessian7x7, true);
                     cout << "optim sim3 get size: " << numOptMatches << endl;
+                    AppendKeyframeMatchDebugCsv(KeyframeMatchDebugCsvPath(), "projection_after_optimize_sim3", pKF, pMostBoWMatchesKF, vpMatchedMPs, &vpKeyFrameMatchedMP);
 
                     // 6. when optimed Scm is found, search by projection again to get more matched points 
                     if(numOptMatches >= 10)
@@ -273,6 +400,7 @@ bool CalibC2C::DetectCommonRegionsFromCand(KeyFrame* pKF, vector<KeyFrame*>& vpC
                         // shrink search range
                         numProjMatches = matcher->SearchByProjection(pKF, mScw, vpMapPoints, vpMatchedMPs, 5, 2.0);
                         cout << "after optim sim3 search by projection get size: " << numProjMatches << endl;
+                        AppendKeyframeMatchDebugCsv(KeyframeMatchDebugCsvPath(), "projection_after_optimized_pose", pKF, pMostBoWMatchesKF, vpMatchedMPs);
 
                         if(numProjMatches >= 40)
                         {
@@ -670,10 +798,18 @@ g2o::Sim3 ConvertRawSim3ToScaledMaps(const g2o::Sim3& rawS12, const MapScaleConf
     // raw:    X2_raw = s * R * X1_raw + t
     // scaled: X1_m = scale1 * X1_raw, X2_m = scale2 * X2_raw
     // hence:  X2_m = (scale2 / scale1) * s * R * X1_m + scale2 * t
+    //
+    // If the caller asks to fix scale after applying metric map scales, use an
+    // SE3 initial estimate. The height-derived scales are then the metric
+    // authority and the camera-to-camera calibration should not carry a
+    // leftover Sim3 scale from the raw monocular maps.
+    const double scaledSim3Scale = scaleConfig.fixScaleAfterGlobalScaling
+        ? 1.0
+        : rawS12.scale() * scale2 / scale1;
     return g2o::Sim3(
         rawS12.rotation(),
         rawS12.translation() * scale2,
-        rawS12.scale() * scale2 / scale1);
+        scaledSim3Scale);
 }
 
 void CalibC2C::RunCalib()
@@ -684,6 +820,9 @@ void CalibC2C::RunCalib()
     int bestMatchesNum = 0;
     g2o::Sim3 g2oS12;
 
+    const string keyframeMatchDebugCsv = KeyframeMatchDebugCsvPath();
+    InitKeyframeMatchDebugCsv(keyframeMatchDebugCsv);
+    cout << "keyframe match debug CSV: " << keyframeMatchDebugCsv << endl;
     cout << "front camera kf size: " << srcKFs.size() << endl;
 
     for(auto&& kf : srcKFs)
