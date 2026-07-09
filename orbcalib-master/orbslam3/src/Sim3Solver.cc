@@ -185,7 +185,8 @@ Eigen::Matrix4f Sim3Solver::iterate(int nIterations, bool &bNoMore, vector<bool>
             vAvailableIndices.pop_back();
         }
 
-        ComputeSim3(P3Dc1i,P3Dc2i);
+        if(!ComputeSim3(P3Dc1i,P3Dc2i))
+            continue;
 
         CheckInliers();
 
@@ -235,7 +236,7 @@ Eigen::Matrix4f Sim3Solver::iterate(int nIterations, bool &bNoMore, vector<bool>
 
     int nCurrentIterations = 0;
 
-    Eigen::Matrix4f bestSim3;
+    Eigen::Matrix4f bestSim3 = Eigen::Matrix4f::Identity();
 
     while(mnIterations<mRansacMaxIts && nCurrentIterations<nIterations)
     {
@@ -258,7 +259,8 @@ Eigen::Matrix4f Sim3Solver::iterate(int nIterations, bool &bNoMore, vector<bool>
             vAvailableIndices.pop_back();
         }
 
-        ComputeSim3(P3Dc1i,P3Dc2i);
+        if(!ComputeSim3(P3Dc1i,P3Dc2i))
+            continue;
 
         CheckInliers();
 
@@ -308,7 +310,7 @@ void Sim3Solver::ComputeCentroid(Eigen::Matrix3f &P, Eigen::Matrix3f &Pr, Eigen:
 }
 
 
-void Sim3Solver::ComputeSim3(Eigen::Matrix3f &P1, Eigen::Matrix3f &P2)
+bool Sim3Solver::ComputeSim3(Eigen::Matrix3f &P1, Eigen::Matrix3f &P2)
 {
     // Custom implementation of:
     // Horn 1987, Closed-form solution of absolute orientataion using unit quaternions
@@ -323,9 +325,14 @@ void Sim3Solver::ComputeSim3(Eigen::Matrix3f &P1, Eigen::Matrix3f &P2)
     ComputeCentroid(P1,Pr1,O1);
     ComputeCentroid(P2,Pr2,O2);
 
+    if(!Pr1.allFinite() || !Pr2.allFinite())
+        return false;
+
     // Step 2: Compute M matrix
 
     Eigen::Matrix3f M = Pr2 * Pr1.transpose();
+    if(!M.allFinite())
+        return false;
 
     // Step 3: Compute N matrix
     double N11, N12, N13, N14, N22, N23, N24, N33, N34, N44;
@@ -355,6 +362,8 @@ void Sim3Solver::ComputeSim3(Eigen::Matrix3f &P1, Eigen::Matrix3f &P2)
 
     Eigen::Vector4f eval = eigSolver.eigenvalues().real();
     Eigen::Matrix4f evec = eigSolver.eigenvectors().real(); //evec[0] is the quaternion of the desired rotation
+    if(!eval.allFinite() || !evec.allFinite())
+        return false;
 
     int maxIndex; // should be zero
     eval.maxCoeff(&maxIndex);
@@ -362,10 +371,20 @@ void Sim3Solver::ComputeSim3(Eigen::Matrix3f &P1, Eigen::Matrix3f &P2)
     Eigen::Vector3f vec = evec.block<3,1>(1,maxIndex); //extract imaginary part of the quaternion (sin*axis)
 
     // Rotation angle. sin is the norm of the imaginary part, cos is the real part
-    double ang=atan2(vec.norm(),evec(0,maxIndex));
+    const float vecNorm = vec.norm();
+    if(!std::isfinite(vecNorm) || vecNorm < 1e-8f || !std::isfinite(evec(0,maxIndex)))
+        return false;
 
-    vec = 2*ang*vec/vec.norm(); //Angle-axis representation. quaternion angle is the half
+    double ang=atan2(vecNorm,evec(0,maxIndex));
+    if(!std::isfinite(ang))
+        return false;
+
+    vec = 2*ang*vec/vecNorm; //Angle-axis representation. quaternion angle is the half
+    if(!vec.allFinite())
+        return false;
     mR12i = Sophus::SO3f::exp(vec).matrix();
+    if(!mR12i.allFinite())
+        return false;
 
     // Step 5: Rotate set 2
     Eigen::Matrix3f P3 = mR12i*Pr2;
@@ -381,14 +400,20 @@ void Sim3Solver::ComputeSim3(Eigen::Matrix3f &P1, Eigen::Matrix3f &P2)
         Eigen::Array<float,3,3> aux_P3;
         aux_P3 = P3.array() * P3.array();
         double den = aux_P3.sum();
+        if(!std::isfinite(nom) || !std::isfinite(den) || std::abs(den) < 1e-12)
+            return false;
 
         ms12i = nom/den;
     }
     else
         ms12i = 1.0f;
+    if(!std::isfinite(ms12i) || std::abs(ms12i) < 1e-12f)
+        return false;
 
     // Step 7: Translation
     mt12i = O1 - ms12i * mR12i * O2;
+    if(!mt12i.allFinite())
+        return false;
 
     // Step 8: Transformation
 
@@ -409,6 +434,7 @@ void Sim3Solver::ComputeSim3(Eigen::Matrix3f &P1, Eigen::Matrix3f &P2)
 
     Eigen::Vector3f tinv = -sRinv * mt12i;
     mT21i.block<3,1>(0,3) = tinv;
+    return mT12i.allFinite() && mT21i.allFinite();
 }
 
 

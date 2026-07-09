@@ -12,6 +12,9 @@ orbcalib-master/build_*/
 orbcalib-master/devel/
 orbcalib-master/install/
 orbcalib-master/results_*/
+orbcalib-master/good_results_2/
+orbcalib-master/calib_inliers_*.csv
+orbcalib-master/sahkotalo_fov120_fov130_calibration_report.pdf
 orbcalib-master/**/*.log
 orbcalib-master/**/*.osa
 orbcalib-master/**/*atlasCamera*.osa

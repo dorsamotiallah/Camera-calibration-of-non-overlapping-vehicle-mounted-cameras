@@ -1,7 +1,7 @@
 %YAML:1.0
 
 # Agilex right camera after fisheye-to-pinhole defishing.
-# Generated for 1920x1080 output with horizontal FOV = 130 degrees.
+# Generated for 1920x1080 output with diagonal FOV = 125 degrees.
 
 # System.LoadAtlasFromFile: "right_defished_atlas"
 System.SaveAtlasToFile: "Agilex_right_defished_atlas"
@@ -9,8 +9,8 @@ System.SaveAtlasToFile: "Agilex_right_defished_atlas"
 File.version: "1.0"
 Camera.type: "PinHole"
 
-Camera1.fx: 447.5772463282546
-Camera1.fy: 447.5772463282546
+Camera1.fx: 573.380444084518
+Camera1.fy: 573.380444084518
 Camera1.cx: 959.5
 Camera1.cy: 539.5
 

@@ -20,6 +20,7 @@ CONTROLLED_CONFIG=${CONTROLLED_CONFIG:-"$REPO_DIR/config/sim/calib_agilex_contro
 CAMERA1_CONFIG=${CAMERA1_CONFIG:-"$REPO_DIR/config/sim/agilex_${CAMERA1_NAME}_cam.yaml"}
 CAMERA2_CONFIG=${CAMERA2_CONFIG:-"$REPO_DIR/config/sim/agilex_${CAMERA2_NAME}_cam.yaml"}
 CALIB_BIN=${CALIB_BIN:-"$REPO_DIR/build/calib/calib"}
+ATLAS_OBSERVATIONS_BIN=${ATLAS_OBSERVATIONS_BIN:-"$REPO_DIR/build/calib/atlas_export_observations"}
 MAX_IN_FLIGHT=${MAX_IN_FLIGHT:-1}
 ACK_TIMEOUT_SEC=${ACK_TIMEOUT_SEC:-120}
 PAIRING=${PAIRING:-nearest}
@@ -160,6 +161,28 @@ fix_result_permissions() {
   fi
 }
 
+resolve_atlas_prefix() {
+  local camera_name="$1"
+  local camera_index="$2"
+  local legacy_prefix="$RUN_REL/${camera_name}_atlas"
+  local agilex_prefix="$RUN_REL/Agilex_${camera_name}_atlas"
+
+  if [[ -f "$RUN_DIR/Agilex_${camera_name}_atlasCamera ${camera_index}.osa" ]]; then
+    echo "$agilex_prefix"
+    return
+  fi
+
+  if [[ -f "$RUN_DIR/${camera_name}_atlasCamera ${camera_index}.osa" ]]; then
+    echo "$legacy_prefix"
+    return
+  fi
+
+  echo "Missing atlas for ${camera_name} camera ${camera_index}. Expected one of:" >&2
+  echo "  $RUN_DIR/Agilex_${camera_name}_atlasCamera ${camera_index}.osa" >&2
+  echo "  $RUN_DIR/${camera_name}_atlasCamera ${camera_index}.osa" >&2
+  return 1
+}
+
 make_slam_camera_config() {
   local src="$1"
   local dst="$2"
@@ -178,6 +201,29 @@ make_slam_camera_config() {
     END {
       if (!wrote_atlas) {
         print save_line
+      }
+    }
+  ' "$src" > "$dst"
+}
+
+make_load_camera_config() {
+  local src="$1"
+  local dst="$2"
+  local atlas_prefix="$3"
+
+  awk -v load_line="System.LoadAtlasFromFile: \"$atlas_prefix\"" '
+    BEGIN { wrote_atlas = 0 }
+    /^System\.(LoadAtlasFromFile|SaveAtlasToFile):/ {
+      if (!wrote_atlas) {
+        print load_line
+        wrote_atlas = 1
+      }
+      next
+    }
+    { print }
+    END {
+      if (!wrote_atlas) {
+        print load_line
       }
     }
   ' "$src" > "$dst"
@@ -242,6 +288,7 @@ require_file "$CONTROLLED_CONFIG"
 require_file "$CAMERA1_CONFIG"
 require_file "$CAMERA2_CONFIG"
 require_file "$CALIB_BIN"
+require_file "$ATLAS_OBSERVATIONS_BIN"
 
 mkdir -p "$RUN_DIR/config"
 fix_result_permissions
@@ -280,6 +327,7 @@ frame_pairs_csv=$RUN_REL/frame_pairs.csv
 started_at=$(date -Iseconds)
 repo_dir=$REPO_DIR
 calib_bin=$CALIB_BIN
+atlas_observations_bin=$ATLAS_OBSERVATIONS_BIN
 controlled_config=$CONTROLLED_CONFIG
 camera1_source_config=$CAMERA1_CONFIG
 camera2_source_config=$CAMERA2_CONFIG
@@ -363,6 +411,35 @@ CALIB_STATUS=0
 wait "$CALIB_PID" || CALIB_STATUS=$?
 CALIB_PID=""
 
+OBS_EXPORT_STATUS=0
+CAMERA1_OBSERVATIONS_CSV="$RUN_DIR/${CAMERA1_NAME}_raw_keyframe_observations.csv"
+CAMERA2_OBSERVATIONS_CSV="$RUN_DIR/${CAMERA2_NAME}_raw_keyframe_observations.csv"
+CAMERA1_ATLAS_PREFIX=""
+CAMERA2_ATLAS_PREFIX=""
+
+if CAMERA1_ATLAS_PREFIX=$(resolve_atlas_prefix "$CAMERA1_NAME" 1) && \
+   CAMERA2_ATLAS_PREFIX=$(resolve_atlas_prefix "$CAMERA2_NAME" 2); then
+  make_load_camera_config "$CAMERA1_CONFIG" "$RUN_DIR/config/${CAMERA1_NAME}_controlled_observation_export_load.yaml" "$CAMERA1_ATLAS_PREFIX"
+  make_load_camera_config "$CAMERA2_CONFIG" "$RUN_DIR/config/${CAMERA2_NAME}_controlled_observation_export_load.yaml" "$CAMERA2_ATLAS_PREFIX"
+
+  echo "Exporting raw ORB-SLAM keyframe observations..."
+  "$ATLAS_OBSERVATIONS_BIN" \
+    "$VOCAB_PATH" \
+    "$RUN_DIR/config/${CAMERA1_NAME}_controlled_observation_export_load.yaml" \
+    "Camera 1" \
+    "$CAMERA1_OBSERVATIONS_CSV" \
+    > "$RUN_DIR/${CAMERA1_NAME}_raw_keyframe_observations_export.log" 2>&1 || OBS_EXPORT_STATUS=$?
+
+  "$ATLAS_OBSERVATIONS_BIN" \
+    "$VOCAB_PATH" \
+    "$RUN_DIR/config/${CAMERA2_NAME}_controlled_observation_export_load.yaml" \
+    "Camera 2" \
+    "$CAMERA2_OBSERVATIONS_CSV" \
+    > "$RUN_DIR/${CAMERA2_NAME}_raw_keyframe_observations_export.log" 2>&1 || OBS_EXPORT_STATUS=$?
+else
+  OBS_EXPORT_STATUS=1
+fi
+
 if [[ -n "${ROSCORE_PID}" ]] && kill -0 "$ROSCORE_PID" 2>/dev/null; then
   kill -INT "$ROSCORE_PID" 2>/dev/null || true
   wait "$ROSCORE_PID" || true
@@ -372,8 +449,15 @@ fi
 {
   echo "finished_at=$(date -Iseconds)"
   echo "orbcalib_exit_status=$CALIB_STATUS"
+  echo "raw_observation_export_status=$OBS_EXPORT_STATUS"
+  echo "camera1_raw_observations_csv=${CAMERA1_OBSERVATIONS_CSV#"$REPO_DIR"/}"
+  echo "camera2_raw_observations_csv=${CAMERA2_OBSERVATIONS_CSV#"$REPO_DIR"/}"
+  echo "camera1_raw_observations_log=$RUN_REL/${CAMERA1_NAME}_raw_keyframe_observations_export.log"
+  echo "camera2_raw_observations_log=$RUN_REL/${CAMERA2_NAME}_raw_keyframe_observations_export.log"
   echo "atlas_files:"
   ls -lh "$RUN_DIR"/*atlasCamera*.osa 2>/dev/null || true
+  echo "raw_observation_files:"
+  ls -lh "$CAMERA1_OBSERVATIONS_CSV" "$CAMERA2_OBSERVATIONS_CSV" 2>/dev/null || true
 } >> "$RUN_DIR/manifest.txt"
 
 fix_result_permissions
